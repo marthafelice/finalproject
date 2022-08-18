@@ -1,5 +1,5 @@
 // accounts-model.js - A mongoose model
-// 
+//
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
@@ -7,7 +7,10 @@ module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient');
   const { Schema } = mongooseClient;
   const schema = new Schema({
-    text: { type: String, required: true }
+    name: { type: String, required: true },
+    phone: { type: String, required: true },
+    avatar: { type: String, default:'https://www.google.com/#' },
+    login: { type: Schema.Types.ObjectId, ref:'logins' },
   }, {
     timestamps: true
   });
@@ -18,5 +21,5 @@ module.exports = function (app) {
     mongooseClient.deleteModel(modelName);
   }
   return mongooseClient.model(modelName, schema);
-  
+
 };
