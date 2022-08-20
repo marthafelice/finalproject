@@ -11,6 +11,8 @@ module.exports = function (app) {
     phone: { type: String, required: true },
     avatar: { type: String, default:'https://www.google.com/#' },
     login: { type: Schema.Types.ObjectId, ref:'logins' },
+    accountType: [{ type: Schema.Types.ObjectId, refPath:'accountModel' }],
+    accountModel: { type: String, enum: ['employees', 'customers'] },
   }, {
     timestamps: true
   });

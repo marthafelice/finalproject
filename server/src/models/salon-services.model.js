@@ -1,5 +1,5 @@
 // salon-services-model.js - A mongoose model
-// 
+//
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
@@ -7,7 +7,12 @@ module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient');
   const { Schema } = mongooseClient;
   const schema = new Schema({
-    text: { type: String, required: true }
+
+    serviceName: { type: String, required: true },
+    serviceCost: { type: String, required: true },
+    serviceImage: { type: String, required: true },
+    employees: [{ type: Schema.Types.ObjectId, required: true, ref: 'employees' }],
+    reservations: [{ type: Schema.Types.ObjectId, ref:'reservations' }]
   }, {
     timestamps: true
   });
@@ -18,5 +23,5 @@ module.exports = function (app) {
     mongooseClient.deleteModel(modelName);
   }
   return mongooseClient.model(modelName, schema);
-  
+
 };
