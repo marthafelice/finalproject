@@ -2,14 +2,17 @@
 //
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
+
 module.exports = function (app) {
   const modelName = 'logins';
   const mongooseClient = app.get('mongooseClient');
+  const { Schema } = mongooseClient;
   const schema = new mongooseClient.Schema({
-  
+
     email: { type: String, unique: true, lowercase: true },
     password: { type: String },
-  
+    accounts:[ { type: Schema.Types.ObjectId, ref:'accounts' }],
+
   }, {
     timestamps: true
   });

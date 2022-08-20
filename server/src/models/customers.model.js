@@ -1,13 +1,14 @@
 // customers-model.js - A mongoose model
-// 
+//
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
   const modelName = 'customers';
   const mongooseClient = app.get('mongooseClient');
-  const { Schema } = mongooseClient;
+  const {Schema} = mongooseClient;
   const schema = new Schema({
-    text: { type: String, required: true }
+    reservations:[{type: Schema.Types.ObjectId, ref: 'reservations'}],
+    account: {type: Schema.Types.ObjectId, ref: 'accounts'}
   }, {
     timestamps: true
   });
@@ -18,5 +19,5 @@ module.exports = function (app) {
     mongooseClient.deleteModel(modelName);
   }
   return mongooseClient.model(modelName, schema);
-  
+
 };

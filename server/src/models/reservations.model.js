@@ -1,5 +1,5 @@
 // reservations-model.js - A mongoose model
-// 
+//
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
@@ -7,7 +7,13 @@ module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient');
   const { Schema } = mongooseClient;
   const schema = new Schema({
-    text: { type: String, required: true }
+    status: { type: String, default:'requested', enum: ['requested', 'confirmed', 'canceled'] },
+    reservationTime: { type: Date, required: true },//both date and time
+    customer: {type: Schema.Types.ObjectId, ref: 'customers'},
+    assignments: [{
+      service: {type: Schema.Types.ObjectId, ref: 'services', required: true },
+      employee: {type: Schema.Types.ObjectId, ref: 'employees'},
+    }]
   }, {
     timestamps: true
   });
@@ -18,5 +24,5 @@ module.exports = function (app) {
     mongooseClient.deleteModel(modelName);
   }
   return mongooseClient.model(modelName, schema);
-  
+
 };
