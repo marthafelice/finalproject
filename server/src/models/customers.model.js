@@ -6,9 +6,10 @@ module.exports = function (app) {
   const modelName = 'customers';
   const mongooseClient = app.get('mongooseClient');
   const {Schema} = mongooseClient;
+
   const schema = new Schema({
-    reservations:[{type: Schema.Types.ObjectId, ref: 'reservations'}],
-    account: {type: Schema.Types.ObjectId, ref: 'accounts'}
+    reservations: [{type: Schema.Types.ObjectId, ref: 'reservations'}], // done
+    account: {type: Schema.Types.ObjectId, ref: 'accounts'} // done
   }, {
     timestamps: true
   });
