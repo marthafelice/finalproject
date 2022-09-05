@@ -1,13 +1,38 @@
-const { authenticate } = require('@feathersjs/authentication').hooks;
+const {TransactionManager} = require('feathers-mongoose');
+const isTransactionEnable = true;
+const {authenticate} = require('@feathersjs/authentication').hooks;
+const {when} = require('feathers-hooks-common');
+
+async function accountTypeHook (hook) {
+  if (hook.type === 'after') {
+    const customerId = hook.result._id;
+    const accountId = hook.result.account;
+    // patch accounts in the login model
+    let accountTypePatchData = {
+      $addToSet: {accountType: customerId},
+      accountModel: 'customers'
+    };
+    await hook.app.service('accounts').patch(accountId, accountTypePatchData, hook.params);
+  }
+}
 
 module.exports = {
   before: {
-    all: [ authenticate('jwt') ],
+    all: [authenticate('jwt')],
     find: [],
     get: [],
-    create: [],
+    create: [
+      when(isTransactionEnable, async hook =>
+        TransactionManager.beginTransaction(hook)
+      ),
+      accountTypeHook
+    ],
+
     update: [],
-    patch: [],
+    patch: [
+      when(isTransactionEnable, async hook => TransactionManager.beginTransaction(hook)
+      )
+    ],
     remove: []
   },
 
@@ -15,9 +40,13 @@ module.exports = {
     all: [],
     find: [],
     get: [],
-    create: [],
+    create: [
+      accountTypeHook,
+      when(isTransactionEnable, TransactionManager.commitTransaction),
+    ],
+
     update: [],
-    patch: [],
+    patch: [when(isTransactionEnable, TransactionManager.commitTransaction)],
     remove: []
   },
 
@@ -25,9 +54,9 @@ module.exports = {
     all: [],
     find: [],
     get: [],
-    create: [],
+    create: [when(isTransactionEnable, TransactionManager.rollbackTransaction)],
     update: [],
-    patch: [],
+    patch: [when(isTransactionEnable, TransactionManager.rollbackTransaction)],
     remove: []
   }
 };

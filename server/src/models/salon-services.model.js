@@ -5,14 +5,14 @@
 module.exports = function (app) {
   const modelName = 'salonServices';
   const mongooseClient = app.get('mongooseClient');
-  const { Schema } = mongooseClient;
+  const {Schema} = mongooseClient;
   const schema = new Schema({
 
-    serviceName: { type: String, required: true },
-    serviceCost: { type: String, required: true },
-    serviceImage: { type: String, required: true },
-    employees: [{ type: Schema.Types.ObjectId, required: true, ref: 'employees' }],
-    reservations: [{ type: Schema.Types.ObjectId, ref:'reservations' }]
+    serviceName: {type: String, required: true},
+    serviceCost: {type: String, required: true},
+    serviceImage: {type: String, required: true},
+    employees: [{type: Schema.Types.ObjectId, required: true, ref: 'employees'}], // done
+    reservations: [{type: Schema.Types.ObjectId, ref: 'reservations'}] // mostly done - requires testing
   }, {
     timestamps: true
   });
