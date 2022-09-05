@@ -11,7 +11,7 @@ module.exports = function (app) {
 
     email: { type: String, unique: true, lowercase: true },
     password: { type: String },
-    accounts:[ { type: Schema.Types.ObjectId, ref:'accounts' }],
+    accounts:[ { type: Schema.Types.ObjectId, ref:'accounts' }], // done
 
   }, {
     timestamps: true

@@ -6,7 +6,10 @@ const hooks = require('./accounts.hooks');
 module.exports = function (app) {
   const options = {
     Model: createModel(app),
-    paginate: app.get('paginate')
+    paginate: app.get('paginate'),
+    // id: '_id',
+    // whitelist: ['$regex'],
+    // multi: true,
   };
 
   // Initialize our service with any options it requires

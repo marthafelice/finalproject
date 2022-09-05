@@ -1,31 +1,55 @@
-const { authenticate } = require('@feathersjs/authentication').hooks;
+//const TransactionManager = require('feathers-mongoose').TransactionManager;
+const isTransactionEnable = true;
+const {TransactionManager} = require('feathers-mongoose');
+const {authenticate} = require('@feathersjs/authentication').hooks;
+const {when} = require('feathers-hooks-common');
 
 const {
   hashPassword, protect
 } = require('@feathersjs/authentication-local').hooks;
 
+
 module.exports = {
   before: {
     all: [],
-    find: [ authenticate('jwt') ],
-    get: [ authenticate('jwt') ],
-    create: [ hashPassword('password') ],
-    update: [ hashPassword('password'),  authenticate('jwt') ],
-    patch: [ hashPassword('password'),  authenticate('jwt') ],
-    remove: [ authenticate('jwt') ]
+    find: [authenticate('jwt')],
+    get: [authenticate('jwt')],
+    create: [
+      hashPassword('password'),
+      when(isTransactionEnable, async hook =>
+        TransactionManager.beginTransaction(hook)
+      ),
+    ],
+
+    update: [
+      hashPassword('password'),
+      authenticate('jwt'),
+    ],
+    patch: [
+      hashPassword('password'),
+      authenticate('jwt'),
+      when(isTransactionEnable, async hook => TransactionManager.beginTransaction(hook)
+      )
+    ],
+    remove: [authenticate('jwt')]
   },
 
   after: {
-    all: [ 
+    all: [
       // Make sure the password field is never sent to the client
       // Always must be the last hook
       protect('password')
     ],
     find: [],
     get: [],
-    create: [],
+    create: [
+      when(isTransactionEnable, TransactionManager.commitTransaction),
+    ],
+
     update: [],
-    patch: [],
+    patch: [
+      when(isTransactionEnable, TransactionManager.commitTransaction),
+    ],
     remove: []
   },
 
@@ -33,9 +57,9 @@ module.exports = {
     all: [],
     find: [],
     get: [],
-    create: [],
+    create: [when(isTransactionEnable, TransactionManager.rollbackTransaction)],
     update: [],
-    patch: [],
+    patch: [when(isTransactionEnable, TransactionManager.rollbackTransaction)],
     remove: []
   }
 };

@@ -10,9 +10,10 @@ module.exports = function (app) {
     name: { type: String, required: true },
     phone: { type: String, required: true },
     avatar: { type: String, default:'https://www.google.com/#' },
-    login: { type: Schema.Types.ObjectId, ref:'logins' },
-    accountType: [{ type: Schema.Types.ObjectId, refPath:'accountModel' }],
-    accountModel: { type: String, enum: ['employees', 'customers'] },
+    role: { type: String, enum: ['admin', 'regular'], default: 'regular'},
+    login: { type: Schema.Types.ObjectId, ref:'logins' }, //done
+    accountType: [{ type: Schema.Types.ObjectId, refPath:'accountModel' }], // done
+    accountModel: { type: String, enum: ['employees', 'customers'] }, // done
   }, {
     timestamps: true
   });

@@ -28,5 +28,5 @@
       "passwordField": "password"
     }
   },
-  "mongodb": "mongodb://localhost:27017,localhost:27018,localhost:27019,localhost:27020/salondb?replicaSet=repset0&serverSelectionTimeoutMS=2000&connectTimeoutMS=30000&maxIdleTimeMS=600000"
+  "mongodb": "mongodb://127.0.0.1:27017,127.0.0.1:27018,127.0.0.1:27019,127.0.0.1.2720/salondb?replicaSet=repset0&serverSelectionTimeoutMS=2000&connectTimeoutMS=30000&maxIdleTimeMS=600000"
 }
