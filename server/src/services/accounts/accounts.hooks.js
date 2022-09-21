@@ -18,6 +18,9 @@ async function manageLoginAccountRel(hook) {
       let loginPatchData = {
         $addToSet: {accounts: accountId}
       };
+      if(!hook.params.login.activeAccount){
+        loginPatchData.activeAccount = hook.result._id;
+      }
       await hook.app.service('logins').patch(loginId, loginPatchData, hook.params);
     }
   }

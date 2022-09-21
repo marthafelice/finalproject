@@ -8,9 +8,9 @@ module.exports = function (app) {
   const { Schema } = mongooseClient;
   const schema = new Schema({
     workingDays:[{ type: String, required: true }],
-    services: [{ type: Schema.Types.ObjectId, required: true, ref: 'services' }],
-    account:{ type: Schema.Types.ObjectId, ref:'accounts' },
-    reservations: [{ type: Schema.Types.ObjectId, ref:'reservations' }]
+    services: [{ type: Schema.Types.ObjectId, required: true, ref: 'services' }], // done
+    account:{ type: Schema.Types.ObjectId, ref:'accounts' }, // done
+    reservations: [{ type: Schema.Types.ObjectId, ref:'reservations' }] // mostly done -requires testing
   }, {
     timestamps: true
   });

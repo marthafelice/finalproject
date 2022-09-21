@@ -1,12 +1,11 @@
 // src/feathers.ts
-import feathers from '@feathersjs/feathers'
-import socketio from '@feathersjs/socketio-client'
-import auth from '@feathersjs/authentication-client'
-import { setupFeathersPinia } from 'feathers-pinia'
-import io from 'socket.io-client'
-import { iff, discard } from 'feathers-hooks-common'
+import feathers from '@feathersjs/feathers';
+import socketio from '@feathersjs/socketio-client';
+import auth from '@feathersjs/authentication-client';
+import { setupFeathersPinia } from 'feathers-pinia';
+import io from 'socket.io-client';
 
-const socket = io('http://localhost:3030', { transports: ['websocket'] })
+const socket = io('http://localhost:3030', { transports: ['websocket'] });
 
 // This variable name becomes the alias for this server.
 export const api = feathers()
@@ -16,4 +15,4 @@ export const api = feathers()
 export const { defineStore, BaseModel } = setupFeathersPinia({
   clients: { api },
   idField: '_id',
-})
+});

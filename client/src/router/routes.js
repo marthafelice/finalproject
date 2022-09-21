@@ -2,9 +2,39 @@
 const routes = [
   {
     path: '/',
+    component: () => import('layouts/StaticLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/IndexPage.vue') },
+      {
+        path: 'accounts',
+        meta: {requiresAuth: true, },
+        component: () => import('pages/AccountsPage.vue')
+      },
+
+    ]
+  },
+  {
+    path: '/accounts/:id',
+    component: () => import('layouts/ProfileLayout.vue'),
+    children: [
+      {
+        path: '',
+        meta: {requiresAuth: true, },
+        name: 'profile',
+        component: () => import('pages/ProfilePage.vue'),
+      }
+    ]
+  },
+  {
+    path: '/admin',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') }
+      { path: '', component: () => import('pages/admin/AdminPage.vue') },
+      {
+        path: 'accounts',
+        meta: {requiresAuth: true, },
+        component: () => import('pages/admin/AccountPage.vue')
+      },
     ]
   },
 
@@ -14,6 +44,6 @@ const routes = [
     path: '/:catchAll(.*)*',
     component: () => import('pages/ErrorNotFound.vue')
   }
-]
+];
 
-export default routes
+export default routes;

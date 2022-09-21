@@ -8,6 +8,19 @@ const {
   hashPassword, protect
 } = require('@feathersjs/authentication-local').hooks;
 
+async function hardCodeAdmin (context) {
+  try {
+    const adminAccountsResponse = await context.service.find({
+      role: 'admin'
+    });
+    if(!adminAccountsResponse.total){
+      context.data.role = 'admin';
+    }
+    return context;
+  }catch (e) {
+    throw new Error(e);
+  }
+}
 
 module.exports = {
   before: {
@@ -43,6 +56,7 @@ module.exports = {
     find: [],
     get: [],
     create: [
+      hardCodeAdmin,
       when(isTransactionEnable, TransactionManager.commitTransaction),
     ],
 
