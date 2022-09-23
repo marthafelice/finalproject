@@ -5,20 +5,20 @@ const routes = [
     component: () => import('layouts/StaticLayout.vue'),
     children: [
       { path: '', component: () => import('pages/IndexPage.vue') },
-      {
-        path: 'accounts',
-        meta: {requiresAuth: true, },
-        component: () => import('pages/AccountsPage.vue')
-      },
-
     ]
   },
   {
-    path: '/accounts/:id',
+    path: '/accounts',
     component: () => import('layouts/ProfileLayout.vue'),
     children: [
       {
         path: '',
+        name: 'accounts',
+        meta: {requiresAuth: true, },
+        component: () => import('pages/AccountsPage.vue')
+      },
+      {
+        path: '/accounts/:id',
         meta: {requiresAuth: true, },
         name: 'profile',
         component: () => import('pages/ProfilePage.vue'),

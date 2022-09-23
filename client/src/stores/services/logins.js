@@ -1,7 +1,8 @@
-import { defineStore, BaseModel } from 'feathers-pinia'; // (1)
+import {defineStore, BaseModel,} from 'feathers-pinia'; // (1)
 import { api } from 'src/api/feathers';
 
-export class Logins extends BaseModel {}
+export class Logins extends BaseModel {
+}
 
 const servicePath = 'logins';
 const useLogins = defineStore({

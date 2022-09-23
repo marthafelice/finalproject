@@ -41,7 +41,7 @@
           <q-btn label="Close" type="reset" color="primary" outline class="q-ml-sm" />
 
           <slot name="Submit-button">
-            <q-btn label="Submit" type="submit" color="primary"/>
+            <q-btn :label="account ? 'Update':'Save'" type="submit" color="primary"/>
           </slot>
 
         </div>
@@ -56,10 +56,8 @@
   import isMobilePhone from 'validator/lib/isMobilePhone';
   import {models} from 'feathers-pinia';
   import {useQuasar} from 'quasar';
-  import {useRouter} from 'vue-router';
 
   const $q = useQuasar();
-  const $router = useRouter();
   const props = defineProps(['modelValue','account']);
   const $emit = defineEmits(['submit','update:model-value']);
 
@@ -78,8 +76,7 @@
 
   async function onSubmit(){
     try{
-      const account = await formData.value.save();
-      await $router.push(`/accounts/${account?._id}`);
+      await formData.value.save();
       onReset();
       $q.notify({
         type: 'positive',

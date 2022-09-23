@@ -1,10 +1,12 @@
 import { defineStore, BaseModel } from 'feathers-pinia'; // (1)
 import { api } from 'src/api/feathers';
 
-export class Accounts extends BaseModel {}
+export class Accounts extends BaseModel {
+
+}
 
 const servicePath = 'accounts';
-const useLogins = defineStore({
+const useAccounts = defineStore({
   idField: '_id', // (2)
   clients: { api }, // (2)
   servicePath,
@@ -36,4 +38,4 @@ api.service(servicePath).hooks({
 });
 
 
-export default useLogins;
+export default useAccounts;
