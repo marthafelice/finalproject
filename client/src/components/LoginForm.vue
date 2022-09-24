@@ -1,6 +1,6 @@
 <template>
 
- <div>
+ <div v-if="!isAuthenticated">
    <q-btn color="primary" @click="open=true">Login</q-btn>
    <auth-form @submit="onLogin" v-model="open">
      <template #title>
@@ -21,7 +21,7 @@
   import useLogin from 'src/composables/useLogin';
   //import {ref} from 'vue'
 
-  const {open, onLogin} = useLogin();
+  const {open, onLogin,  isAuthenticated} = useLogin();
 
 </script>
 

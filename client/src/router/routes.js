@@ -26,6 +26,24 @@ const routes = [
     ]
   },
   {
+    path: '/services',
+    component: () => import('layouts/ProfileLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'services',
+        meta: {requiresAuth: true, },
+        component: () => import('pages/ServicesPage.vue')
+      },
+      {
+        path: '/services/:id',
+        meta: {requiresAuth: true, },
+        name: 'service',
+        component: () => import('pages/ServicePage.vue'),
+      }
+    ]
+  },
+  {
     path: '/admin',
     component: () => import('layouts/MainLayout.vue'),
     children: [

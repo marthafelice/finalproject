@@ -1,4 +1,4 @@
-import {ref} from 'vue';
+import {ref, toRefs} from 'vue';
 import {useAuth} from 'stores/auth';
 import {useQuasar} from 'quasar';
 import {useRouter} from 'vue-router';
@@ -50,11 +50,14 @@ export default function (){
       });
     }
   }
-
+const {payload,isAuthenticated,authenticate} = toRefs(auth);
   return {
     open,
     onLogin,
-    onLogout
+    onLogout,
+    authUser: payload,
+    isAuthenticated,
+    authenticate
   };
 
 }

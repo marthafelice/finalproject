@@ -1,4 +1,3 @@
-
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
@@ -9,11 +8,11 @@
           round
           icon="menu"
           aria-label="Menu"
-          @click="toggleLeftDrawer"
+          @click="leftDrawerOpen=!leftDrawerOpen"
         />
 
         <q-toolbar-title>
-          Quasar App
+      Salon Booking System
         </q-toolbar-title>
 
         <div>Quasar v{{ $q.version }}</div>
@@ -22,13 +21,13 @@
 
     <q-drawer
 
-style="position: relative;"
+      style="position: relative;"
       v-model="leftDrawerOpen"
       show-if-above
       bordered
     >
-
-      <div class="row justify-between q-pa-md q-ma-md" >
+{{authUser?.activeAccount}}
+      <div class="row justify-between q-pa-md q-ma-md">
         <q-item-label
           header
           class="col-8 text-primary text-h6  text-bold"
@@ -61,31 +60,31 @@ style="position: relative;"
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <router-view/>
     </q-page-container>
   </q-layout>
 </template>
 
-<script>
-  import {defineComponent, ref, computed, onMounted} from 'vue';
+<script setup>
+  import {ref, computed, onMounted} from 'vue';
   import EssentialLink from 'components/EssentialLink.vue';
   import {useQuasar} from 'quasar';
   import LogoutButton from 'components/LogoutButton';
   import {models, useGet} from 'feathers-pinia';
   import AccountAvatar from 'components/AccountAvatar';
-  import {useAuth} from 'stores/auth';
   import {useRoute} from 'vue-router';
-  // import {useRouter} from 'vue-router/dist/vue-router';
-  const linksList = [
+  import useLogin from 'src/composables/useLogin';
+  import useLogins from 'stores/services/logins';
+  const essentialLinks = ref([
     {
       title: 'Employees',
-      caption: 'Saloon Employees',
+      caption: 'Salon Employees',
       icon: 'school',
       link: '/employees'
     },
     {
       title: 'Customers',
-      caption: 'Saloon Customers',
+      caption: 'Salon Customers',
       icon: 'code',
       link: '/customers'
     },
@@ -105,49 +104,32 @@ style="position: relative;"
       title: 'Services',
       caption: 'Saloon Services',
       icon: 'fas fa-icons',
-      link: '/accounts'
+      link: '/services'
     },
-  ];
-  export default defineComponent({
-    name: 'MainLayout',
-    components: {
-      AccountAvatar,
-      LogoutButton,
-      EssentialLink
-    },
-    setup () {
-      const leftDrawerOpen = ref(true);
-      const {screen,} = useQuasar();
+  ]);
 
-      const authStore = useAuth();
-      const route = useRoute();
+  const leftDrawerOpen = ref(true);
+  const {screen,} = useQuasar();
 
-      onMounted(async ()=>{
 
-        const res =   await  models.api.Logins.patch(authStore?.payload?._id,{activeAccount:route.params.id});
-        console.log({res});
+  const route = useRoute();
 
-      });
+  const {authUser} = useLogin();
+  const loginStore = useLogins();
 
-      const id = computed(()=>route.params.id || authStore?.payload?.activeAccount);
-
-      const { item: account, isPending, } = useGet({
-        model: models.api.Accounts,
-        id,
-      });
-
-      return {
-        authStore,
-        account,
-        isPending,
-        screen,
-        essentialLinks: linksList,
-        leftDrawerOpen,
-        toggleLeftDrawer () {
-          leftDrawerOpen.value = !leftDrawerOpen.value;
-        },
-
-      };
+  onMounted(async () => {
+    if(authUser?.value?._id) {
+      const res = await loginStore.patch(authUser.value._id,{activeAccount: route.params.id});
+      console.log({res});
     }
+    console.log({authUser:authUser?.value});
   });
+
+  const id = computed(() => route.params.id || authUser?.activeAccount);
+
+  const {item: account} = useGet({
+    model: models.api.Accounts,
+    id,
+  });
+
 </script>

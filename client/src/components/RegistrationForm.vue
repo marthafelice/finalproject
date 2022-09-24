@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="!isAuthenticated">
     <q-btn color="primary" @click="open=true">Register</q-btn>
     <auth-form @submit="onSubmit" v-model="open">
       <template #Submit-button>
@@ -17,7 +17,7 @@
   //import {ref} from 'vue'
   const $q = useQuasar();
 
-  const {open, onLogin} = useLogin();
+  const {open, onLogin,isAuthenticated} = useLogin();
 
 
   async function onSubmit(login) {

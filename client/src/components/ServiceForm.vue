@@ -6,52 +6,67 @@
             transition-show="fade-in"
             transition-hide="fade-out"
   >
-    <q-card class="q-pa-sm bg-white column items-center"  >
+    <q-card class="q-pa-sm column items-center"  >
 
       <q-form
         style="height:100%;width: 20rem; "
         @submit="onSubmit"
         @reset="onReset"
-        class="q-gutter-md column"
+        class="q-mt-none q-gutter-sm q-pa-md"
       >
-        <div class="text-center">
+
           <slot name="title" >
-            <h5>{{account._id? 'Edit': 'New'}} Account</h5>
+            <h5 class="text-center">{{service._id? 'Edit': 'New'}} Service</h5>
           </slot>
-        </div>
+
         <j-file-pond
-          style="width: 150px; height: 150px;"
+          class="self-center"
+         :div-attrs="{ style: 'width:270px; height:auto; margin-top:-20px;',}"
           @upload-error="failed"
           @revert-success="reverted"
           @upload-success="success"
-          class="self-center"
+          imageCropAspectRatio="16:9"
+          :imageResizeTargetWidth="400"
+          :imageResizeTargetHeight="100"
+          stylePanelLayout=""
         />
         <q-input
           filled
           dense
-          v-model="formData.name"
-          label="Name *"
-          hint="Enter Name"
+          v-model="formData.serviceName"
+          label="Service Name *"
+          hint="Enter Service Name"
           lazy-rules
           required
-          :rules="[ val => val.length > 3 || 'Please enter a valid name.']"
+          :rules="[ val => val.length > 3 || 'Please enter a valid service name.']"
         />
         <q-input
           filled
           dense
-          v-model="formData.phone"
+          v-model="formData.serviceCost"
           label="Mobile Phone *"
           hint="Enter Mobile Phone"
           lazy-rules
           required
-          :rules="[ val => isMobilePhone(val,'en-UG') || 'Please enter a valid name.']"
+          :rules="[ val => isCurrency(val,{symbol: 'UGX', require_symbol: false, allow_space_after_symbol: true, symbol_after_digits: true, allow_negatives: false, thousands_separator: ',', allow_decimal: false, allow_space_after_digits: false}) || 'Please enter valid currency']"
         />
-
+        <q-input
+          filled
+          dense
+          type="textarea"
+          autogrow
+          v-model="formData.serviceDescription"
+          label="Service Description *"
+          hint="Enter Service Description"
+          lazy-rules
+          required
+          :rules="[ val => val.length > 15 || 'Description must be more than 15 words']"
+        />
         <div class="q-pt-lg row justify-between q-gutter-sm">
           <q-btn label="Close" type="reset" color="primary" outline class="q-ml-sm" />
 
           <slot name="Submit-button">
-            <q-btn :label="account ? 'Update':'Save'" type="submit" color="primary"/>
+            <q-btn :label="service ? 'Update':'Save'" type="submit" color="primary"/>
           </slot>
 
         </div>
@@ -63,22 +78,22 @@
 <script setup>
   import JFilePond from 'components/j-uploader/JFilePond';
   import {ref, watch} from 'vue';
-  import isMobilePhone from 'validator/lib/isMobilePhone';
+  import isCurrency from 'validator/lib/isCurrency';
   import {models} from 'feathers-pinia';
   import {useQuasar} from 'quasar';
 
   const $q = useQuasar();
-  const props = defineProps(['modelValue','account']);
+  const props = defineProps(['modelValue','service']);
   const $emit = defineEmits(['submit','update:model-value']);
 
   let  formData = ref({});
   let  maximizedToggle = ref(true);
 
-  watch(()=>props.account,(newVal)=>{
+  watch(()=>props.service,(newVal)=>{
     if(newVal) {
-      formData.value = new models.api.Accounts(newVal);
+      formData.value = new models.api.Services(newVal);
     }else{
-      formData.value = new models.api.Accounts();
+      formData.value = new models.api.Services();
     }
   },{
     immediate: true,
@@ -91,7 +106,7 @@
       onReset();
       $q.notify({
         type: 'positive',
-        message: 'Account saved!'
+        message: 'Service saved!'
       });
     } catch (e) {
       $q.notify({
@@ -102,12 +117,12 @@
   }
 
   function onReset() {
-    formData.value = new models.api.Accounts();
+    formData.value = new models.api.Services();
     $emit('update:model-value', false);
   // open.value = false;
   }
   function reverted() {
-    formData.value.avatar = null;
+    formData.value.serviceImage = null;
     $q.notify({
       type: 'positive',
       message: 'Successfully reverted upload',
@@ -116,7 +131,7 @@
 
   function success(val) {
     console.log(val);
-    formData.value.avatar = val;
+    formData.value.serviceImage = val;
     $q.notify({
       type: 'positive',
       message: 'Successfully uploaded',

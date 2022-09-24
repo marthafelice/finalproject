@@ -9,6 +9,8 @@ module.exports = function (app) {
   const schema = new Schema({
 
     serviceName: {type: String, required: true},
+    serviceDescription: {type: String, required: true},
+    serviceRating: {type: Number, required: true},
     serviceCost: {type: String, required: true},
     serviceImage: {type: String, required: true},
     employees: [{type: Schema.Types.ObjectId, required: true, ref: 'employees'}], // done
