@@ -9,7 +9,7 @@ const multipartMiddleware = multer();
 // but you can use feathers-blob with any other
 // storage service like AWS or Google Drive.
 const fs = require('fs-blob-store');
-let blobStorage = fs(__dirname + '/images');
+let blobStorage = fs(__dirname + '../../../../public/images');
 const AWS = require('aws-sdk');
 const S3BlobStore = require('s3-blob-store');
 
@@ -38,6 +38,12 @@ module.exports = function (app) {
     // transfer the received file to feathers
     function(req,res,next){
       req.feathers.file = req.file;
+      next();
+    },
+    function (req, res, next) {
+      res.header('Access-Control-Allow-Origin', '*');  // USE actual URL for the webserver instead of * in production
+      res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+      res.header('Access-Control-Allow-Methods', '*'); // Limit the methods to actually used in produciton
       next();
     },
     blobService({Model: blobStorage})

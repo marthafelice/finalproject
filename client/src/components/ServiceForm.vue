@@ -1,22 +1,23 @@
 <template>
   <q-dialog :model-value="modelValue" @update:model-value="$emit('update:model-value',$event)"
             position="right"
+            seamless
             persistent
             :maximized="maximizedToggle"
             transition-show="fade-in"
             transition-hide="fade-out"
   >
-    <q-card class="q-pa-sm column items-center"  >
+    <q-card class="q-pa-sm column items-center bg-primary text-white" >
 
       <q-form
         style="height:100%;width: 20rem; "
         @submit="onSubmit"
         @reset="onReset"
-        class="q-mt-none q-gutter-sm q-pa-md"
+        class="q-mt-none q-gutter-lg q-pa-md"
       >
 
           <slot name="title" >
-            <h5 class="text-center">{{service._id? 'Edit': 'New'}} Service</h5>
+            <h5 class="text-center text-white">{{service._id? 'Edit': 'New'}} Service</h5>
           </slot>
 
         <j-file-pond
@@ -25,48 +26,68 @@
           @upload-error="failed"
           @revert-success="reverted"
           @upload-success="success"
-          imageCropAspectRatio="16:9"
-          :imageResizeTargetWidth="400"
-          :imageResizeTargetHeight="100"
           stylePanelLayout=""
         />
         <q-input
           filled
           dense
+         bg-color="grey-4"
+         label-color="dark"
           v-model="formData.serviceName"
           label="Service Name *"
-          hint="Enter Service Name"
           lazy-rules
           required
           :rules="[ val => val.length > 3 || 'Please enter a valid service name.']"
-        />
+        >
+          <template #hint>
+            <span class="text-caption text-grey-4">Enter Service Name</span>
+          </template>
+        </q-input>
         <q-input
           filled
           dense
+          bg-color="grey-4"
+          label-color="dark"
           v-model="formData.serviceCost"
-          label="Mobile Phone *"
-          hint="Enter Mobile Phone"
+          label="Service Cost *"
+          mask="######"
+          unmasked-value
           lazy-rules
           required
           :rules="[ val => isCurrency(val,{symbol: 'UGX', require_symbol: false, allow_space_after_symbol: true, symbol_after_digits: true, allow_negatives: false, thousands_separator: ',', allow_decimal: false, allow_space_after_digits: false}) || 'Please enter valid currency']"
-        />
+        >
+          <template #hint>
+            <span class="text-caption text-grey-4">Enter Service Cost (ugx 1,690)</span>
+          </template>
+          <template #prepend>
+            <span class="text-caption text-bold ">USH</span>
+          </template>
+          <template #append>
+            <span class="text-caption text-bold ">/=</span>
+          </template>
+        </q-input>
         <q-input
           filled
           dense
+          bg-color="grey-4"
+          label-color="dark"
           type="textarea"
           autogrow
           v-model="formData.serviceDescription"
           label="Service Description *"
-          hint="Enter Service Description"
           lazy-rules
           required
           :rules="[ val => val.length > 15 || 'Description must be more than 15 words']"
-        />
-        <div class="q-pt-lg row justify-between q-gutter-sm">
-          <q-btn label="Close" type="reset" color="primary" outline class="q-ml-sm" />
+        >
+          <template #hint>
+          <span class="text-caption text-grey-4">Enter Service Description</span>
+        </template>
+        </q-input>
+          <div class="q-pt-lg row justify-between q-gutter-sm">
+          <q-btn label="Close" type="reset" color="white" outline class="q-ml-sm" />
 
           <slot name="Submit-button">
-            <q-btn :label="service ? 'Update':'Save'" type="submit" color="primary"/>
+            <q-btn :label="service?._id ? 'Update':'Save'" type="submit" color="secondary"/>
           </slot>
 
         </div>

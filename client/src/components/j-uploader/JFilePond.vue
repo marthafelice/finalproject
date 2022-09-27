@@ -103,7 +103,8 @@
       const uri = await blobToBase64(file);
       const uploadsToStore = new models.api.Uploads({uri});
       const result = await uploadsToStore.save();
-      const url = `https://violove.s3.us-west-2.amazonaws.com/${result.id}`;
+      const url = `http://localhost:3030/images/${result.id}`;
+      console.log({url});
       load(url);
       $emit('upload-success', url);
     } catch (e) {

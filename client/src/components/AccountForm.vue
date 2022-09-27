@@ -1,6 +1,7 @@
 <template>
   <q-dialog :model-value="modelValue" @update:model-value="$emit('update:model-value',$event)"
             position="right"
+            seamless
             persistent
             :maximized="maximizedToggle"
             transition-show="fade-in"

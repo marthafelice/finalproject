@@ -1,6 +1,6 @@
 <template>
   <q-avatar color="dark">
-    <q-img v-if="account?.avatar" :src="account?.avatar"/>
+    <q-img v-if="account?.avatar" :src="account?.avatar" crossorigin="anonymous"/>
     <span v-else>{{ account?.name ? getInitials(account?.name) : 'A' }}</span>
   </q-avatar>
 </template>

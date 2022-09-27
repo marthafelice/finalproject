@@ -28,7 +28,7 @@ module.exports = configure(function (ctx) {
     boot: [
       'pinia',
       'axios',
-      'filepond'
+      'filepond',
     ],
 
     // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-css

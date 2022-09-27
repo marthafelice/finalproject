@@ -4,4 +4,5 @@ import { api as feathersClient } from 'src/api/feathers';
 
 export const useAuth = defineAuthStore({
   feathersClient,
+
 });

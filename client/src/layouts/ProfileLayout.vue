@@ -20,13 +20,13 @@
     </q-header>
 
     <q-drawer
-
+class="bg-primary text-white"
       style="position: relative;"
       v-model="leftDrawerOpen"
       show-if-above
       bordered
     >
-{{authUser?.activeAccount}}
+
       <div class="row justify-between q-pa-md q-ma-md">
         <q-item-label
           header
@@ -35,7 +35,7 @@
           {{ account?.name }}
         </q-item-label>
         <div v-if="leftDrawerOpen && screen.lt.md">
-          <q-btn color="primary" @click="leftDrawerOpen = false" outline round icon="fas fa-arrow-alt-circle-left"/>
+          <q-btn color="secondary" @click="leftDrawerOpen = false" outline round icon="fas fa-arrow-alt-circle-left"/>
         </div>
       </div>
       <q-list class="q-ma-md">
@@ -52,29 +52,29 @@
             <account-avatar :account="account"/>
           </q-item-section>
           <q-item-section>
-            <logout-button label="sign out" color="primary"/>
+            <logout-button label="sign out" color="secondary"/>
           </q-item-section>
 
         </q-item>
       </div>
     </q-drawer>
 
-    <q-page-container>
+    <q-page-container style=" max-width: 100%;
+    overflow-x: hidden;">
       <router-view/>
     </q-page-container>
   </q-layout>
 </template>
 
 <script setup>
-  import {ref, computed, onMounted} from 'vue';
+  import {ref, computed, } from 'vue';
   import EssentialLink from 'components/EssentialLink.vue';
   import {useQuasar} from 'quasar';
   import LogoutButton from 'components/LogoutButton';
   import {models, useGet} from 'feathers-pinia';
   import AccountAvatar from 'components/AccountAvatar';
+  import {useAuth} from 'stores/auth';
   import {useRoute} from 'vue-router';
-  import useLogin from 'src/composables/useLogin';
-  import useLogins from 'stores/services/logins';
   const essentialLinks = ref([
     {
       title: 'Employees',
@@ -108,25 +108,16 @@
     },
   ]);
 
-  const leftDrawerOpen = ref(true);
-  const {screen,} = useQuasar();
+  let leftDrawerOpen = ref(true);
+  let {screen,} = useQuasar();
 
 
   const route = useRoute();
+  const authStore = useAuth();
 
-  const {authUser} = useLogin();
-  const loginStore = useLogins();
 
-  onMounted(async () => {
-    if(authUser?.value?._id) {
-      const res = await loginStore.patch(authUser.value._id,{activeAccount: route.params.id});
-      console.log({res});
-    }
-    console.log({authUser:authUser?.value});
-  });
-
-  const id = computed(() => route.params.id || authUser?.activeAccount);
-
+  const id = computed(() => route?.params?.id || authStore?.payload?.activeAccount);
+  console.log({id:id.value});
   const {item: account} = useGet({
     model: models.api.Accounts,
     id,

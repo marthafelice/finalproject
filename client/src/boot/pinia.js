@@ -15,7 +15,8 @@ const servicePlugins = requireModule
   .map(modulePath => requireModule(modulePath).default);
 
 
-export default boot((/*{ app }*/) => {
+export default boot(({ app }) => {
   servicePlugins.forEach(fn => fn());
-  useAuth();
+ const authStore = useAuth();
+ app.provide('$authStore', authStore);
 });

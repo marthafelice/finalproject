@@ -35,14 +35,14 @@
   import {models, useFind} from 'feathers-pinia';
   import {computed, ref} from 'vue';
 
-  import {useRouter} from 'vue-router/dist/vue-router';
+  //import {useRouter} from 'vue-router/dist/vue-router';
   import AccountForm from 'components/AccountForm';
   import {useAuth} from 'stores/auth';
   import AccountAvatar from 'components/AccountAvatar';
   import {useQuasar} from 'quasar';
 
   const $q = useQuasar();
-  const $router = useRouter();
+  //const $router = useRouter();
   const authStore = useAuth();
   const openAccountForm = ref(false);
   const accountToEdit = ref({});
@@ -64,7 +64,11 @@
 
   async function navigateToAccount(accountId) {
     if (accountId) {
-      await $router.push(`/accounts/${accountId}`);
+      const loginInstance = new models.api.Logins({_id:authStore?.payload?._id});
+      await loginInstance.save({data:{activeAccount:accountId}});
+      loginInstance.addToStore();
+      // await $router.push(`/accounts/${accountId}`);
+      window.location.href = `/accounts/${accountId}`;
     }
   }
   function handleOpenAccountForm(account){
@@ -82,6 +86,7 @@
     // console.log('>>>> OK')
     }).onOk(async () => {
       try{
+
         await models.api.Accounts.remove(account._id);
         $q.notify({
           type: 'positive',
