@@ -77,10 +77,15 @@
   import {ref, watch} from 'vue';
   import {models} from 'feathers-pinia';
   import {useQuasar} from 'quasar';
+  import {useAuth} from 'stores/auth';
+  import useCustomers from 'stores/services/customers';
 
   const $q = useQuasar();
   const props = defineProps(['modelValue','service','reservation']);
   const $emit = defineEmits(['submit','update:model-value']);
+
+  const authStore = useAuth();
+  const customerStore = useCustomers();
 
   let  formData = ref({reservationTime: Date.now()});
   let  maximizedToggle = ref(true);
@@ -101,7 +106,16 @@
   async function onSubmit(){
     try{
       formData.value.service = props.service._id;
-
+      let {data} = await customerStore.find({
+        query: {
+          account: authStore?.payload?.activeAccount
+        }
+      });
+      let customer = data[0];
+      if(!customer){
+        customer = await customerStore.create({account: authStore?.payload?.activeAccount});
+      }
+      formData.value.customer = customer._id;
       await formData.value.save();
       console.log(formData.value);
       onReset();
