@@ -43,7 +43,7 @@
     // openAccountForm,
   } = useAccounts({
     query: {
-      accountModel: 'customers',
+      'accountType.Model': 'customers',
     }
   });
 

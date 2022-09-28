@@ -7,20 +7,46 @@ async function accountTypeHook (hook) {
   if (hook.type === 'after') {
     const employeeId = hook.result._id;
     const accountId = hook.result.account;
+    const services = hook.result.services;
     if(accountId){
       // patch accounts in the login model
       let accountTypePatchData = {
-        $addToSet: {accountType: employeeId},
-        accountModel: 'employees'
+        $addToSet: {
+          accountType: {
+            _id: employeeId,
+            Model:'employees'
+          }
+        },
+
       };
       if(hook.method === 'remove') {
         accountTypePatchData = {
-          $pull: {accountType: employeeId},
-          accountModel: 'employees'
+          $pull: {
+            accountType: {
+              _id: employeeId,
+              Model:'employees'
+            }
+          },
+
         };
       }
       await hook.app.service('accounts').patch(accountId, accountTypePatchData, hook.params);
 
+    }
+    if(services&&services.length){
+      let servicesQueryParams ={
+        query:{
+          _id: {$in: services}
+        }
+      };
+      let servicesPatchObj ={
+        $addToSet: { employees: employeeId}
+      };
+      hook.params.query ={
+        ...hook.params.query,
+        ...servicesQueryParams
+      };
+      await hook.app.service('salon-services').patch(null, servicesPatchObj, hook.params);
     }
   }
 }

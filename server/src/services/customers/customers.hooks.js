@@ -10,13 +10,21 @@ async function accountTypeHook (hook) {
     if(accountId){
       // patch accounts in the login model
       let accountTypePatchData = {
-        $addToSet: {accountType: customerId},
-        accountModel: 'customers'
+        $addToSet: {
+          accountType: {
+            _id: customerId,
+            Model: 'customers'
+          }
+        },
       };
       if(hook.method === 'remove') {
         accountTypePatchData = {
-          $pull: {accountType: customerId},
-          accountModel: 'customers'
+          $pull: {
+            accountType: {
+              _id: customerId,
+              Model: 'customers'
+            }
+          },
         };
       }
       await hook.app.service('accounts').patch(accountId, accountTypePatchData, hook.params);

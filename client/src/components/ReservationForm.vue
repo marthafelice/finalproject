@@ -114,17 +114,21 @@
 
   async function onSubmit(){
     try{
-      formData.value.service = props.service._id;
+      console.log(formData.value,{authStore,customerStore});
+
       let {data} = await customerStore.find({
         query: {
           account: authStore?.payload?.activeAccount
         }
       });
       let customer = data[0];
+
       if(!customer){
         customer = await customerStore.create({account: authStore?.payload?.activeAccount});
       }
       formData.value.customer = customer._id;
+      formData.value.service = props?.service?._id;
+      console.log(formData.value);
       await formData.value.save();
       console.log(formData.value);
       onReset();

@@ -35,7 +35,7 @@
           hint="Enter Name"
           lazy-rules
           required
-          :rules="[ val => val.length > 3 || 'Please enter a valid name.']"
+          :rules="[ val => $lget(val,'length') > 3 || 'Please enter a valid name.']"
         />
         <q-input
           filled
@@ -67,6 +67,8 @@
   import isMobilePhone from 'validator/lib/isMobilePhone';
   import {models} from 'feathers-pinia';
   import {useQuasar} from 'quasar';
+  import $lget from 'lodash.get';
+  //import $lset from 'lodash.set';
 
   const $q = useQuasar();
   const props = defineProps(['modelValue','account']);
@@ -116,7 +118,7 @@
   }
 
   function success(val) {
-    console.log(val);
+
     formData.value.avatar = val;
     $q.notify({
       type: 'positive',

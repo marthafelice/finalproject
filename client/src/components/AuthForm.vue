@@ -30,7 +30,7 @@
           lazy-rules
           :rules="[
           val => val !== null && val !== '' || 'Please type Valid Password',
-          val => val.length >= 8 && val.length < 12 || 'Please type a Valid Password'
+          val => $lget(val,'length') >= 8 && $lget(val,'length') < 12 || 'Please type a Valid Password'
         ]"
         >
           <template v-slot:append>
@@ -61,6 +61,8 @@
 <script setup>
   import {ref} from 'vue';
   import isEmail from 'validator/lib/isEmail';
+  import $lget from 'lodash.get';
+  // import $lset from 'lodash.set';
 
 
   //const $router = useRouter();

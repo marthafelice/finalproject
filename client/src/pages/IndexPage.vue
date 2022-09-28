@@ -1,5 +1,4 @@
 
-
 <template>
   <q-page class="column items-center justify-center bg-accent q-px-lg">
     <div class="q-pa-md row justify-around" style="max-width: 400px">

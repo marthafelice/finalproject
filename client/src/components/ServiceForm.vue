@@ -37,7 +37,7 @@
           label="Service Name *"
           lazy-rules
           required
-          :rules="[ val => val.length > 3 || 'Please enter a valid service name.']"
+          :rules="[ val => $lget(val,'length') > 3 || 'Please enter a valid service name.']"
         >
           <template #hint>
             <span class="text-caption text-grey-4">Enter Service Name</span>
@@ -77,7 +77,7 @@
           label="Service Description *"
           lazy-rules
           required
-          :rules="[ val => val.length > 15 || 'Description must be more than 15 words']"
+          :rules="[ val => $lget(val,'length') > 15 || 'Description must be more than 15 words']"
         >
           <template #hint>
           <span class="text-caption text-grey-4">Enter Service Description</span>
@@ -97,6 +97,8 @@
 </template>
 
 <script setup>
+  import $lget from 'lodash.get';
+  // import $lset from 'lodash.set';
   import JFilePond from 'components/j-uploader/JFilePond';
   import {ref, watch} from 'vue';
   import isCurrency from 'validator/lib/isCurrency';
@@ -114,7 +116,7 @@
     if(newVal) {
       formData.value = new models.api.Services(newVal);
     }else{
-      formData.value = new models.api.Services();
+      formData.value = new models.api.Services({});
     }
   },{
     immediate: true,
@@ -138,7 +140,7 @@
   }
 
   function onReset() {
-    formData.value = new models.api.Services();
+    formData.value = new models.api.Services({});
     $emit('update:model-value', false);
   // open.value = false;
   }

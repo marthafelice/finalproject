@@ -26,7 +26,7 @@
         </q-card-actions>
       </q-card>
     </div>
-
+<employee-form v-model="openAccountForm" :account="accountToEdit"/>
 <!--    <account-form v-model="openAccountForm" :account="accountToEdit"/>-->
   </q-page>
 </template>
@@ -34,6 +34,7 @@
 <script setup>
   import AccountAvatar from 'components/AccountAvatar';
   import useAccounts from 'src/composables/useAccounts';
+  import EmployeeForm from 'components/EmployeeForm';
 
 
   const {
@@ -41,9 +42,10 @@
     handleOpenAccountForm,
     accounts,
     openAccountForm,
+    accountToEdit
   } = useAccounts({
     query: {
-      accountModel: 'employees',
+      'accountType.Model': 'employees',
     }
   });
 

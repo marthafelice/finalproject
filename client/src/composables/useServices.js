@@ -3,7 +3,7 @@ import {useQuasar} from 'quasar';
 import {models, useFind} from 'feathers-pinia';
 import {computed, ref} from 'vue';
 
-import {useRouter} from 'vue-router/dist/vue-router';
+import {useRouter} from 'vue-router';
 
 export default function (){
   const $q = useQuasar();
