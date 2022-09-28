@@ -11,11 +11,10 @@
           @click="leftDrawerOpen=!leftDrawerOpen"
         />
 
-        <q-toolbar-title>
+        <q-toolbar-title :class="[$q.screen.lt.md? 'text-h6':'text-h4']">
       Salon Booking System
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
 
@@ -25,19 +24,23 @@ class="bg-primary text-white"
       v-model="leftDrawerOpen"
       show-if-above
       bordered
+
     >
 
       <div class="row justify-between q-pa-md q-ma-md">
         <q-item-label
           header
-          class="col-8 text-primary text-h6  text-bold"
+          class="col-8 text-white text-h6  text-bold"
         >
           {{ account?.name }}
         </q-item-label>
+
         <div v-if="leftDrawerOpen && screen.lt.md">
-          <q-btn color="secondary" @click="leftDrawerOpen = false" outline round icon="fas fa-arrow-alt-circle-left"/>
+          <q-btn color="accent" @click="leftDrawerOpen = false" outline round icon="fas fa-arrow-alt-circle-left"/>
         </div>
       </div>
+
+      <q-separator dark spaced color="white"/>
       <q-list class="q-ma-md">
         <EssentialLink
           v-for="link in essentialLinks"

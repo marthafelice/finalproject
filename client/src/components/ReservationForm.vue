@@ -10,7 +10,7 @@
     <q-card class="q-pa-sm column items-center bg-primary text-white" >
 
       <q-form
-        style="height:100%;width: 20rem; "
+        :style="`height:100%; ${$q.screen.gt.sm ? 'width: 15rem;':''}`"
         @submit="onSubmit"
         @reset="onReset"
         class="q-mt-none q-gutter-lg q-pa-md"
@@ -30,8 +30,8 @@
                  label-color="dark">
           <template v-slot:prepend>
             <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                <q-date v-model="formData.reservationTime" mask="YYYY-MM-DD HH:mm" landscape color="accent">
+              <q-popup-proxy   cover transition-show="scale" transition-hide="scale">
+                <q-date v-model="formData.reservationTime" mask="YYYY-MM-DD HH:mm" :landscape="$q.screen.gt.sm" color="accent">
                   <div class="row items-center justify-end">
                     <q-btn v-close-popup label="Close" color="primary" flat />
                   </div>
@@ -42,8 +42,17 @@
 
           <template v-slot:append>
             <q-icon name="access_time" class="cursor-pointer">
-              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                <q-time v-model="formData.reservationTime" mask="YYYY-MM-DD HH:mm" format24h flat now-btn landscape color="accent">
+              <q-popup-proxy   cover transition-show="scale" transition-hide="scale">
+                <q-time
+                  v-model="formData.reservationTime"
+                  mask="YYYY-MM-DD HH:mm"
+                  format24h
+                  flat
+                  now-btn
+                  :landscape="$q.screen.gt.sm"
+                  color="accent"
+
+                >
                   <div class="row items-center justify-end">
                     <q-btn v-close-popup label="Close" flat color="primary" />
                   </div>

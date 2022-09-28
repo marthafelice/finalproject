@@ -5,14 +5,18 @@ import {computed, ref} from 'vue';
 
 import {useRouter} from 'vue-router/dist/vue-router';
 
+
 export default function (){
+
+
   const $q = useQuasar();
   const $router = useRouter();
-  const openServiceForm = ref(false);
-  const serviceToEdit = ref({});
+  const openEmployeeForm = ref(false);
+  const employeeToEdit = ref({});
+
 
   // 2. Create a computed property for the params
-  const servicesParams = computed(() => {
+  const  employeesParams = computed(() => {
     return {
       /*
       query: {
@@ -22,39 +26,39 @@ export default function (){
     };
   });
   // 3. Provide the Model class and params in the options
-  const {items: services} = useFind({
-    model:models.api.Services,
-    params: servicesParams
+  const {items: employees} = useFind({
+    model:models.api.Employees,
+    params: employeesParams
   });
 
 
-  async function navigateToService(serviceId) {
-    if (serviceId) {
-      await $router.push(`/services/${serviceId}`);
+  async function navigateToEmployee(employeeId) {
+    if (employeeId) {
+      await $router.push(`/employees/${employeeId}`);
     }
   }
-  function handleOpenServiceForm(service){
-   if(service?._id){
-     serviceToEdit.value = service;
+  function handleOpenEmployeeForm(employee){
+   if(employee?._id){
+     employeeToEdit.value = employee;
    }
-    openServiceForm.value=true;
+    openEmployeeForm.value=true;
   }
 
-  async function handleDeleteService(service) {
+  async function handleDeleteEmployee(employee) {
     $q.dialog({
       dark: true,
       title: 'Confirm Delete',
-      message: `Would you like to delete the ${service?.serviceName} service ?`,
+      message: 'Would you like to delete this employee ?',
       cancel: true,
       persistent: true
     }).onOk(() => {
       // console.log('>>>> OK')
     }).onOk(async () => {
       try{
-        await models.api.Services.remove(service._id);
+        await models.api.Employees.remove(employee._id);
         $q.notify({
           type: 'positive',
-          message: `Successfully deleted the ${service?.serviceName} service.`,
+          message: 'Successfully deleted the employee.',
         });
       } catch (e) {
         $q.notify({
@@ -70,12 +74,12 @@ export default function (){
     });
   }
   return {
-    serviceToEdit,
-    openServiceForm,
-    services,
-    navigateToService,
-    handleOpenServiceForm,
-    handleDeleteService,
+    employeeToEdit,
+    openEmployeeForm,
+    employees,
+    navigateToEmployee,
+    handleOpenEmployeeForm,
+    handleDeleteEmployee,
   };
 
 }

@@ -44,6 +44,60 @@ const routes = [
     ]
   },
   {
+    path: '/employees',
+    component: () => import('layouts/ProfileLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'employees',
+        meta: {requiresAuth: true, },
+        component: () => import('pages/EmployeesPage.vue')
+      },
+      {
+        path: '/employee/:id',
+        meta: {requiresAuth: true, },
+        name: 'employee',
+        component: () => import('pages/EmployeePage.vue'),
+      }
+    ]
+  },
+  {
+    path: '/customers',
+    component: () => import('layouts/ProfileLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'customers',
+        meta: {requiresAuth: true, },
+        component: () => import('pages/CustomersPage.vue')
+      },
+      {
+        path: '/customer/:id',
+        meta: {requiresAuth: true, },
+        name: 'customer',
+        component: () => import('pages/CustomerPage.vue'),
+      }
+    ]
+  },
+  {
+    path: '/reservations',
+    component: () => import('layouts/ProfileLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'reservations',
+        meta: {requiresAuth: true, },
+        component: () => import('pages/ReservationPage.vue')
+      },
+      {
+        path: '/reservation/:id',
+        meta: {requiresAuth: true, },
+        name: 'reservation',
+        component: () => import('pages/ReservationPage.vue'),
+      }
+    ]
+  },
+  {
     path: '/admin',
     component: () => import('layouts/MainLayout.vue'),
     children: [

@@ -10,7 +10,7 @@
     <q-card class="q-pa-sm bg-white column items-center"  >
 
       <q-form
-        style="height:100%;width: 20rem; "
+
         @submit="onSubmit"
         @reset="onReset"
         class="q-gutter-md column"
@@ -21,7 +21,7 @@
           </slot>
         </div>
         <j-file-pond
-          style="width: 150px; height: 150px;"
+          :div-attrs="{ style:`height:auto; margin-top:-20px; ${$q.screen.gt.sm ? 'width: 15rem;':''}`,}"
           @upload-error="failed"
           @revert-success="reverted"
           @upload-success="success"
