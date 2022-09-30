@@ -1,18 +1,19 @@
-
 import {useQuasar} from 'quasar';
-import {models, useFind} from 'feathers-pinia';
+import {models} from 'feathers-pinia';
 import {computed, ref} from 'vue';
 
 import {useRouter} from 'vue-router';
+import useFindPaginate from 'src/composables/useFindPaginate';
 
 
-export default function (){
+export default function () {
 
 
   const $q = useQuasar();
   const $router = useRouter();
   const openReservationForm = ref(false);
   const reservationToEdit = ref({});
+  const reservationServiceToEdit = ref({});
 
 
   // 2. Create a computed property for the params
@@ -23,12 +24,15 @@ export default function (){
         login: authStore?.payload?._id,
       },
      * */
+      debounce: 500
     };
   });
   // 3. Provide the Model class and params in the options
-  const {items: reservations} = useFind({
-    model:models.api.Reservations,
-    params: reservationsParams
+  const {items: reservations} = useFindPaginate({
+    limit: ref(10),
+    model: models.api.Reservations,
+    params: reservationsParams,
+    query: computed(()=>({})),
   });
 
 
@@ -37,11 +41,16 @@ export default function (){
       await $router.push(`/reservations/${reservationId}`);
     }
   }
-  function handleOpenReservationForm(reservation){
-   if(reservation?._id){
-     reservationToEdit.value = reservation;
-   }
-    openReservationForm.value=true;
+
+  function handleOpenReservationForm(reservation) {
+    if (reservation?._id) {
+      reservationToEdit.value = reservation;
+    }
+
+    if (reservation?.service) {
+      reservationServiceToEdit.value = reservation?.service;
+    }
+    openReservationForm.value = true;
   }
 
   async function handleDeleteReservation(reservation) {
@@ -50,11 +59,11 @@ export default function (){
       title: 'Confirm Delete',
       message: 'Would you like to delete this reservation ?',
       cancel: true,
-      persistent: true
+      persistent: true,
     }).onOk(() => {
       // console.log('>>>> OK')
     }).onOk(async () => {
-      try{
+      try {
         await models.api.Reservations.remove(reservation._id);
         $q.notify({
           type: 'positive',
@@ -73,9 +82,11 @@ export default function (){
       // console.log('I am triggered on both OK and Cancel')
     });
   }
+
   return {
     reservationToEdit,
     openReservationForm,
+    reservationServiceToEdit,
     reservations,
     navigateToReservation,
     handleOpenReservationForm,

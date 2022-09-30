@@ -87,7 +87,7 @@ const routes = [
         path: '',
         name: 'reservations',
         meta: {requiresAuth: true, },
-        component: () => import('pages/ReservationPage.vue')
+        component: () => import('pages/ReservationsPage.vue')
       },
       {
         path: '/reservation/:id',

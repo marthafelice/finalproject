@@ -8,7 +8,7 @@ async function manageLoginAccountRel(hook) {
   const isAuthenticated = hook.params.authenticated;
   if (isAuthenticated) {
     const loginId = hook.params.login._id;
-    if (hook.type === 'before') {
+    if (hook.type === 'before' && hook.method !=='remove') {
       // adding loginId to data
       hook.data.login = loginId;
     }
@@ -24,7 +24,8 @@ async function manageLoginAccountRel(hook) {
         }
         if(hook.method === 'remove') {
           loginPatchData = {
-            $pull: {accounts: accountId}
+            $pull: {accounts: accountId},
+            $unset: {activeAccount: ''}
           };
         }
         await hook.app.service('logins').patch(loginId, loginPatchData, hook.params);

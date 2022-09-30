@@ -127,6 +127,7 @@
         customer = await customerStore.create({account: authStore?.payload?.activeAccount});
       }
       formData.value.customer = customer._id;
+      console.log({cool: props?.service});
       formData.value.service = props?.service?._id;
       console.log(formData.value);
       await formData.value.save();

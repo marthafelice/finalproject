@@ -47,17 +47,17 @@
     <q-card-actions>
 <!--      <q-btn flat dense  icon="fas fa-eye"  @click="navigateToService(service._id)"/>-->
 
-        <q-btn dense color="dark"  glossy @click.stop="handleOpenReservationForm">
+        <q-btn dense color="dark"  glossy @click.stop="handleOpenReservationForm({service})">
           Reserve
         </q-btn>
         <q-btn color="dark" glossy dense icon="edit" @click.stop="handleOpenServiceForm(service)"/>
         <q-btn dense icon="delete" glossy color="negative" @click.stop="handleDeleteService(service)"/>
 
     </q-card-actions>
-    <reservation-form v-model="openReservationForm" :service="service"  :reservation="reservationToEdit"/>
   </q-card>
     <service-form v-model="openServiceForm" :service="serviceToEdit"/>
 
+    <reservation-form v-model="openReservationForm" :service="reservationServiceToEdit"  :reservation="reservationToEdit"/>
   </div>
 </template>
 
@@ -82,6 +82,7 @@
     openReservationForm,
     reservationToEdit,
     handleOpenReservationForm,
+    reservationServiceToEdit,
   } = useReservations();
   const ugx = value => new Intl.NumberFormat('en-UG', { style: 'currency', currency: 'UGX' }).format(value);
 
