@@ -1,7 +1,42 @@
 const {TransactionManager} = require('feathers-mongoose');
 const isTransactionEnable = true;
 const {authenticate} = require('@feathersjs/authentication').hooks;
-const {when} = require('feathers-hooks-common');
+const {when, fastJoin} = require('feathers-hooks-common');
+
+const reservationsResolvers = {
+  joins: {
+    service:
+      () =>
+        async (reservation, {app}) => {
+          reservation['serviceObject'] =
+            await app.service('salon-services').get(reservation.service);
+        },
+    customer:
+      () =>
+        async (reservation, {app}) => {
+          const result = await app.service('accounts').find({
+            query: {
+              'accountType._id': reservation.customer,
+              'accountType.Model': 'customers',
+            },
+          });
+          reservation['customerAccount'] = result.total ? result.data[0] : [];
+        },
+  },
+  employee:
+    () =>
+      async (reservation, {app}) => {
+        const result = await app.service('accounts').find({
+          query: {
+            'accountType._id': reservation.employee,
+            'accountType.Model': 'employees',
+          },
+        });
+
+        reservation['employeeAccount'] = result.total ? result.data[0] : [];
+      },
+
+};
 
 async function manageReservationsRel(hook) {
   // console.log(JSON.parse(JSON.stringify(hook)));
@@ -10,26 +45,28 @@ async function manageReservationsRel(hook) {
     const {customer, service, employee} = hook.result;
     // patch accounts in the login model
     let reservationPatchData = {
-      $addToSet: {reservations: reservationId}
+      $addToSet: {reservations: reservationId},
     };
-    if(hook.method === 'remove') {
+    if (hook.method === 'remove') {
       reservationPatchData = {
-        $pull: {reservations: reservationId}
+        $pull: {reservations: reservationId},
       };
     }
 
-    if(customer){
-      await hook.app.service('customers').patch(customer,reservationPatchData, hook.params);
+    if (customer) {
+      await hook.app.service('customers').patch(customer, reservationPatchData, hook.params);
     }
-    if(service){
-      await hook.app.service('salon-services').patch(service,reservationPatchData, hook.params);
+    if (service) {
+      await hook.app.service('salon-services').patch(service, reservationPatchData, hook.params);
     }
-    if(employee){
-      await hook.app.service('employees').patch(employee,reservationPatchData, hook.params);
+    if (employee) {
+      await hook.app.service('employees').patch(employee, reservationPatchData, hook.params);
     }
 
   }
+
 }
+
 
 module.exports = {
   before: {
@@ -38,25 +75,25 @@ module.exports = {
     get: [],
     create: [
       when(isTransactionEnable, async hook =>
-        TransactionManager.beginTransaction(hook)
+        TransactionManager.beginTransaction(hook),
       ),
-      manageReservationsRel
+      manageReservationsRel,
     ],
 
     update: [],
     patch: [
-      when(isTransactionEnable, async hook => TransactionManager.beginTransaction(hook) ),
-      manageReservationsRel
+      when(isTransactionEnable, async hook => TransactionManager.beginTransaction(hook)),
+      manageReservationsRel,
     ],
 
     remove: [
-      when(isTransactionEnable, async hook => TransactionManager.beginTransaction(hook) ),
-      manageReservationsRel
-    ]
+      when(isTransactionEnable, async hook => TransactionManager.beginTransaction(hook)),
+      manageReservationsRel,
+    ],
   },
 
   after: {
-    all: [],
+    all: [fastJoin(reservationsResolvers)],
     find: [],
     get: [],
     create: [
@@ -67,12 +104,12 @@ module.exports = {
     update: [],
     patch: [
       manageReservationsRel,
-      when(isTransactionEnable, TransactionManager.commitTransaction)
+      when(isTransactionEnable, TransactionManager.commitTransaction),
     ],
     remove: [
       manageReservationsRel,
-      when(isTransactionEnable, TransactionManager.commitTransaction)
-    ]
+      when(isTransactionEnable, TransactionManager.commitTransaction),
+    ],
   },
 
   error: {
@@ -82,6 +119,6 @@ module.exports = {
     create: [when(isTransactionEnable, TransactionManager.rollbackTransaction)],
     update: [],
     patch: [when(isTransactionEnable, TransactionManager.rollbackTransaction)],
-    remove: []
-  }
+    remove: [],
+  },
 };

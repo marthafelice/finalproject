@@ -21,7 +21,7 @@
           </slot>
 
         <div class="q-gutter-sm">
-          <q-radio v-model="formData.status" val="requested" label="Requested" keep-color checked-icon="task_alt" unchecked-icon="panorama_fish_eye" color="grey-4"/>
+          <q-radio v-model="formData.status" val="requested" label="Requested" keep-color checked-icon="task_alt" unchecked-icon="panorama_fish_eye" color="grey-4" />
           <q-radio v-model="formData.status" val="confirmed" label="Confirmed" keep-color checked-icon="task_alt" unchecked-icon="panorama_fish_eye" color="grey-4"/>
           <q-radio v-model="formData.status" val="canceled" label="Canceled" keep-color checked-icon="task_alt" unchecked-icon="panorama_fish_eye" color="grey-4"/>
           <q-radio v-model="formData.status" val="attended to" label="Attended To" keep-color checked-icon="task_alt" unchecked-icon="panorama_fish_eye" color="grey-4"/>

@@ -36,7 +36,7 @@ class="bg-primary text-white"
         </q-item-label>
 
         <div v-if="leftDrawerOpen && screen.lt.md">
-          <q-btn color="accent" @click="leftDrawerOpen = false" outline round icon="fas fa-arrow-alt-circle-left"/>
+          <q-btn color="accent" @click="leftDrawerOpen = false" outline round icon="menu"/>
         </div>
       </div>
 

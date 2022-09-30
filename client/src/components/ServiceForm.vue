@@ -66,6 +66,12 @@
             <span class="text-caption text-bold ">/=</span>
           </template>
         </q-input>
+       <div class="column">
+         <span class="text-caption">
+           Service Duration
+         </span>
+         <vue-number-input v-model="formData.serviceDuration" :min="1" :max="10" inline controls :disabled="formData.serviceDuration>10"/>
+       </div>
         <q-input
           filled
           dense
@@ -99,6 +105,7 @@
 <script setup>
   import $lget from 'lodash.get';
   // import $lset from 'lodash.set';
+  import VueNumberInput from '@chenfengyuan/vue-number-input';
   import JFilePond from 'components/j-uploader/JFilePond';
   import {ref, watch} from 'vue';
   import isCurrency from 'validator/lib/isCurrency';

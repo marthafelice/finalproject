@@ -14,6 +14,8 @@
     "build:pwa": "quasar build -m pwa"
   },
   "dependencies": {
+    "@chenfengyuan/vue-number-input": "^2.0.1",
+    "@daypilot/daypilot-lite-vue": "^3.10.1",
     "@feathersjs/authentication-client": "^4.5.15",
     "@feathersjs/feathers": "^4.5.15",
     "@feathersjs/socketio-client": "^4.5.15",

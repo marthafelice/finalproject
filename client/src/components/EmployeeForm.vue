@@ -165,6 +165,7 @@
     },
     'fill-input': false,
     'map-options': true,
+    'emit-value':true,
     'option-value': '_id',
     'option-label': 'serviceName',
     multiple: true,
@@ -185,10 +186,11 @@
       });
     },
     'fill-input': false,
-    'map-options': false,
+    'map-options': true,
     'option-value': '_id',
     'option-label': 'name',
     multiple: false,
+    'emit-value':true,
     'hide-selected': false,
     behavior: 'menu',
     style: 'border-radius: 0.6em; overflow: hidden;',
@@ -230,7 +232,6 @@
 
   async function onSubmit(){
     try{
-      formData.value.account = props?.account?._id;
       await formData.value.save();
       onReset();
       $q.notify({
