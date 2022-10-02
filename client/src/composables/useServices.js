@@ -4,12 +4,18 @@ import {models, useFind} from 'feathers-pinia';
 import {computed, ref} from 'vue';
 
 import {useRouter} from 'vue-router';
+import {useAuth} from 'stores/auth';
+import {storeToRefs} from 'pinia';
 
 export default function (){
   const $q = useQuasar();
   const $router = useRouter();
   const openServiceForm = ref(false);
   const serviceToEdit = ref({});
+
+  const authStore = useAuth();
+
+  const{payload} = storeToRefs(authStore);
 
   // 2. Create a computed property for the params
   const servicesParams = computed(() => {
@@ -29,7 +35,7 @@ export default function (){
 
 
   async function navigateToService(serviceId) {
-    if (serviceId) {
+    if (serviceId && payload?.value?.activeAccount) {
       await $router.push(`/services/${serviceId}`);
     }
   }
@@ -76,6 +82,7 @@ export default function (){
     navigateToService,
     handleOpenServiceForm,
     handleDeleteService,
+    payload
   };
 
 }

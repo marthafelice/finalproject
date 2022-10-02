@@ -2,7 +2,7 @@
 const isTransactionEnable = true;
 const {TransactionManager} = require('feathers-mongoose');
 const {authenticate} = require('@feathersjs/authentication').hooks;
-const {when} = require('feathers-hooks-common');
+const {when, iff, isProvider,} = require('feathers-hooks-common');
 
 const {
   hashPassword, protect
@@ -11,7 +11,7 @@ const {
 async function hardCodeAdmin (context) {
   try {
     const adminAccountsResponse = await context.service.find({
-      role: 'admin'
+      query: { role: 'admin'}
     });
     if(!adminAccountsResponse.total){
       context.data.role = 'admin';
@@ -25,7 +25,11 @@ async function hardCodeAdmin (context) {
 module.exports = {
   before: {
     all: [],
-    find: [authenticate('jwt')],
+    find: [
+      iff(isProvider('external'),
+        authenticate('jwt')
+      )
+    ],
     get: [authenticate('jwt')],
     create: [
       hashPassword('password'),

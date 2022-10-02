@@ -7,7 +7,7 @@
             transition-show="fade-in"
             transition-hide="fade-out"
   >
-    <q-card class="q-pa-sm bg-white column items-center"  >
+    <q-card class="q-pa-sm bg-white column items-center">
 
       <q-form
 
@@ -16,8 +16,8 @@
         class="q-gutter-md column"
       >
         <div class="text-center">
-          <slot name="title" >
-            <h5>{{account._id? 'Edit': 'New'}} Account</h5>
+          <slot name="title">
+            <h5>{{ account._id ? 'Edit' : 'Create An' }} Account</h5>
           </slot>
         </div>
         <j-file-pond
@@ -49,10 +49,10 @@
         />
 
         <div class="q-pt-lg row justify-between q-gutter-sm">
-          <q-btn label="Close" type="reset" color="primary" outline class="q-ml-sm" />
+          <q-btn label="Close" type="reset" color="primary" outline class="q-ml-sm"/>
 
           <slot name="Submit-button">
-            <q-btn :label="account ? 'Update':'Save'" type="submit" color="primary"/>
+            <q-btn :label="account?._id ? 'Update':'Save'" type="submit" color="primary"/>
           </slot>
 
         </div>
@@ -68,38 +68,42 @@
   import {models} from 'feathers-pinia';
   import {useQuasar} from 'quasar';
   import $lget from 'lodash.get';
+  import {useAuth} from 'stores/auth';
   //import $lset from 'lodash.set';
 
   const $q = useQuasar();
-  const props = defineProps(['modelValue','account']);
-  const $emit = defineEmits(['submit','update:model-value']);
+  const authStore = useAuth();
+  const props = defineProps(['modelValue', 'account']);
+  const $emit = defineEmits(['submit', 'update:model-value']);
 
-  let  formData = ref({});
-  let  maximizedToggle = ref(true);
+  let formData = ref({});
+  let maximizedToggle = ref(true);
 
-  watch(()=>props.account,(newVal)=>{
-    if(newVal) {
+  watch(() => props.account, (newVal) => {
+    if (newVal) {
       formData.value = new models.api.Accounts(newVal);
-    }else{
+    } else {
       formData.value = new models.api.Accounts();
     }
-  },{
+  }, {
     immediate: true,
-    deep: true
+    deep: true,
   });
 
-  async function onSubmit(){
-    try{
+  async function onSubmit() {
+    try {
       await formData.value.save();
+      await authStore.authenticate();
+      $emit('submit');
       onReset();
       $q.notify({
         type: 'positive',
-        message: 'Account saved!'
+        message: 'Account saved!',
       });
     } catch (e) {
       $q.notify({
         type: 'negative',
-        message: e.message
+        message: e.message,
       });
     }
   }
@@ -107,8 +111,9 @@
   function onReset() {
     formData.value = new models.api.Accounts();
     $emit('update:model-value', false);
-  // open.value = false;
+    // open.value = false;
   }
+
   function reverted() {
     formData.value.avatar = null;
     $q.notify({

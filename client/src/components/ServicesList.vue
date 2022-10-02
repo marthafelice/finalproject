@@ -50,8 +50,8 @@
         <q-btn dense color="dark"  glossy @click.stop="handleOpenReservationForm({service})">
           Reserve
         </q-btn>
-        <q-btn color="dark" glossy dense icon="edit" @click.stop="handleOpenServiceForm(service)"/>
-        <q-btn dense icon="delete" glossy color="negative" @click.stop="handleDeleteService(service)"/>
+        <q-btn color="dark" glossy dense icon="edit" @click.stop="handleOpenServiceForm(service)" v-if="payload?.activeAccount&&payload.roles==='admin'"/>
+        <q-btn dense icon="delete" glossy color="negative" @click.stop="handleDeleteService(service)" v-if="payload?.activeAccount&&payload.roles==='admin'"/>
 
     </q-card-actions>
   </q-card>
@@ -72,6 +72,7 @@
     serviceToEdit,
     openServiceForm,
     services,
+    payload,
     navigateToService,
     handleOpenServiceForm,
     handleDeleteService,

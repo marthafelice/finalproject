@@ -41,7 +41,17 @@ export default function ({query}={}){
       // console.log('>>>> OK')
     }).onOk(async () => {
       try{
-
+        const accountId = account._id;
+        await account.save({
+          data: {
+            $pull: {
+              'accountType': {
+                _id: accountId,
+                Model: 'accounts'
+              },
+            },
+          },
+        });
         await models.api.Accounts.remove(account._id);
         $q.notify({
           type: 'positive',

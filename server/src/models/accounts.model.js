@@ -9,7 +9,7 @@ module.exports = function (app) {
   const schema = new Schema({
     name: { type: String, required: true },
     phone: { type: String, required: true },
-    avatar: { type: String, default:'https://www.google.com/#' },
+    avatar: String,
     role: { type: String, enum: ['admin', 'regular'], default: 'regular'},
     login: { type: Schema.Types.ObjectId, ref:'logins' }, //done
     accountType: [{

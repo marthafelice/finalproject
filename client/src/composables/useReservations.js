@@ -15,24 +15,27 @@ export default function () {
   const reservationToEdit = ref({});
   const reservationServiceToEdit = ref({});
 
-
+const query = computed(() => ({}));
   // 2. Create a computed property for the params
-  const reservationsParams = computed(() => {
+  const params = computed(() => {
     return {
       /*
       query: {
         login: authStore?.payload?._id,
       },
      * */
-      debounce: 500
+      debounce: 500,
     };
   });
   // 3. Provide the Model class and params in the options
   const {items: reservations} = useFindPaginate({
-    limit: ref(10),
+    limit: ref(30),
     model: models.api.Reservations,
-    params: reservationsParams,
-    query: computed(()=>({})),
+    params,
+    query,
+    useFindOptions:{
+      immediate: true
+    }
   });
 
 
@@ -43,6 +46,7 @@ export default function () {
   }
 
   function handleOpenReservationForm(reservation) {
+
     if (reservation?._id) {
       reservationToEdit.value = reservation;
     }
@@ -51,6 +55,7 @@ export default function () {
       reservationServiceToEdit.value = reservation?.service;
     }
     openReservationForm.value = true;
+
   }
 
   async function handleDeleteReservation(reservation) {

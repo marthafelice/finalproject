@@ -105,24 +105,13 @@
 
   watch(() => account.value, (newVal) => {
     if (newVal) {
+
       essentialLinks.value = [
         {
           title: 'Accounts',
           caption: 'Manage Accounts',
           icon: 'fas fa-users',
           link: '/accounts',
-        },
-        {
-          title: 'Employees',
-          caption: 'Salon Employees',
-          icon: 'school',
-          link: '/employees',
-        },
-        {
-          title: 'Customers',
-          caption: 'Salon Customers',
-          icon: 'code',
-          link: '/customers',
         },
         {
           title: 'Reservations',
@@ -137,6 +126,40 @@
           link: '/services',
         },
       ];
+      if(authStore?.payload?.roles==='admin'){
+        essentialLinks.value = [
+          {
+            title: 'Accounts',
+            caption: 'Manage Accounts',
+            icon: 'fas fa-users',
+            link: '/accounts',
+          },
+          {
+            title: 'Employees',
+            caption: 'Salon Employees',
+            icon: 'school',
+            link: '/employees',
+          },
+          {
+            title: 'Customers',
+            caption: 'Salon Customers',
+            icon: 'code',
+            link: '/customers',
+          },
+          {
+            title: 'Reservations',
+            caption: 'Manage Orders',
+            icon: 'chat',
+            link: '/reservations',
+          },
+          {
+            title: 'Services',
+            caption: 'Saloon Services',
+            icon: 'fas fa-icons',
+            link: '/services',
+          },
+        ];
+      }
     } else {
       essentialLinks.value = [
         {

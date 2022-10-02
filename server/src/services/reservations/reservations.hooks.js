@@ -16,10 +16,10 @@ const reservationsResolvers = {
         async (reservation, {app}) => {
           const result = await app.service('accounts').find({
             query: {
-              'accountType._id': reservation.customer,
-              'accountType.Model': 'customers',
+              'accountType._id': reservation.customer
             },
           });
+
           reservation['customerAccount'] = result.total ? result.data[0] : [];
         },
   },

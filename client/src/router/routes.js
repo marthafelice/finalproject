@@ -5,6 +5,7 @@ const routes = [
     component: () => import('layouts/StaticLayout.vue'),
     children: [
       { path: '', component: () => import('pages/IndexPage.vue') },
+      { path: 'profile-info', component: () => import('pages/ProfileInfoPage.vue') },
     ]
   },
   {
