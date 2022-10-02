@@ -1,7 +1,7 @@
 <template>
   <div v-if="!isAuthenticated">
     <q-btn color="primary" @click="open=true">Register</q-btn>
-    <auth-form @submit="onSubmit" v-model="open">
+    <auth-form @submit="onSubmit" v-model="open" >
       <template #Submit-button>
         <q-btn no-caps color="primary" label="Sign up" type="submit"/>
       </template>

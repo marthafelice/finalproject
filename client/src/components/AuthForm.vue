@@ -19,7 +19,7 @@
           lazy-rules
           required
           :rules="[ val => isEmail(val) || 'Please enter a valid name.']"
-        />
+       />
 
         <q-input
           :type="isPwd ? 'password' : 'text'"
