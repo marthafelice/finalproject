@@ -22,7 +22,7 @@
 
 <script setup>
   import {DayPilotCalendar} from '@daypilot/daypilot-lite-vue';
-  import {computed,ref, watch} from 'vue';
+  import {computed, ref, watch} from 'vue';
   import {date, colors} from 'quasar';
   import useFindPaginate from 'src/composables/useFindPaginate';
   import {models} from 'feathers-pinia';
@@ -80,11 +80,8 @@
           break;
       }
       const ownerType = props?.accountType?.Model === 'employees' ? 'customerAccount' : 'employeeAccount';
-      return {
-        id: reservation?._id,
-        start: reservation?.reservationTime,
-        end: addToDate(reservation?.reservationTime, {hours: reservation?.serviceObject?.serviceDuration}),
-        html: `
+      console.log({services: reservation.serviceObject.serviceName});
+      const html = `
           <div>
         <div class="q-ml-none" style="width: 100%; height:20%;">
           <img
@@ -96,7 +93,7 @@
 
         <div class="column items-center">
           <span class="text-caption text-bold text-center">${reservation?.serviceObject?.serviceName}</span>
-          <div class="row q-gutter-xs" style="${props?.accountType?.Model?'visibility: visible;':'visibility: hidden;'}">
+          <div class="row q-gutter-xs" style="${props?.accountType?.Model ? 'visibility: visible;' : 'visibility: hidden;'}">
               <div class="avatar" style="
               width: 20px;
     height: 20px;
@@ -112,7 +109,12 @@
 
       </div>
 
-        `,
+        `;
+      return {
+        id: reservation?._id,
+        start: reservation?.reservationTime,
+        end: addToDate(reservation?.reservationTime, {hours: reservation?.serviceObject?.serviceDuration}),
+        html,
         barBackColor: getPaletteColor('grey-4'),
         barColor: getPaletteColor('primary'),
         fontColor: getPaletteColor('grey-4'),
@@ -124,7 +126,7 @@
   watch(() => events.value, (newVal) => {
     console.log(newVal);
     control.value?.update({events: newVal});
-  }, {deep: true,});
+  }, {deep: true});
 
 </script>
 <style lang="css" scoped>

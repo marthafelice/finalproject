@@ -5,6 +5,7 @@ const routes = [
     component: () => import('layouts/StaticLayout.vue'),
     children: [
       { path: '', component: () => import('pages/IndexPage.vue') },
+      { path: 'profile-info', component: () => import('pages/ProfileInfoPage.vue') },
     ]
   },
   {
@@ -87,7 +88,7 @@ const routes = [
         path: '',
         name: 'reservations',
         meta: {requiresAuth: true, },
-        component: () => import('pages/ReservationPage.vue')
+        component: () => import('pages/ReservationsPage.vue')
       },
       {
         path: '/reservation/:id',
