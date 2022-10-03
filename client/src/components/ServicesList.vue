@@ -1,4 +1,9 @@
 <template>
+  <div class="column items-center">
+    <div v-if="!openReservationForm" class="q-pa-md row justify-around" style="max-width: 400px">
+      <registration-form class="q-mx-sm" color="primary"/>
+      <login-form class="q-mx-sm" color="primary"/>
+    </div>
   <div :class="[$q.screen.width> 350?'row':'row', 'justify-center q-gutter-sm wrap']" >
   <q-card
     style="min-width: 240px;"
@@ -59,6 +64,7 @@
 
     <reservation-form v-model="openReservationForm" :service="reservationServiceToEdit"  :reservation="reservationToEdit"/>
   </div>
+  </div>
 </template>
 
 <script setup>
@@ -66,7 +72,8 @@
   import useServices from 'src/composables/useServices';
   import useReservations from 'src/composables/useReservations';
   import ReservationForm from 'components/ReservationForm';
-
+  import RegistrationForm from 'components/RegistrationForm';
+  import LoginForm from 'components/LoginForm';
 
   const {
     serviceToEdit,

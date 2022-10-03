@@ -1,7 +1,8 @@
 
 import {useQuasar} from 'quasar';
-import {models, useFind} from 'feathers-pinia';
+import {models} from 'feathers-pinia';
 import {computed, ref} from 'vue';
+import useFindPaginate from 'src/composables/useFindPaginate';
 
 
 
@@ -13,14 +14,16 @@ export default function ({query}={}){
   const accountToEdit = ref({});
 
   // 2. Create a computed property for the params
-  const accountsParams = computed(() => {
-    return {
-      query,
-    };
-  });
+  const accountsQuery = computed(() => ({
+    ...query
+  }));
+  const accountsParams = computed(() => ({
+  debounce:500,
+  }));
   // 3. Provide the Model class and params in the options
-  const {items: accounts} = useFind({
+  const {items: accounts} = useFindPaginate({
     model:models.api.Accounts,
+    query:accountsQuery,
     params: accountsParams
   });
 
@@ -33,6 +36,7 @@ export default function ({query}={}){
   async function handleDeleteAccount(account) {
     $q.dialog({
       dark: true,
+      class:'bg-secondary',
       title: 'Confirm Delete',
       message: `Would you like to delete ${account?.name} ?`,
       cancel: true,

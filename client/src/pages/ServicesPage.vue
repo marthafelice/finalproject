@@ -4,7 +4,7 @@
     <p :class="$q.screen.width> 350? 'text-h1':'text-h5'">MY SERVICES</p>
     -->
    <div>
-     <div>
+     <div v-if="authStore?.payload?.roles==='admin'">
        <q-btn label="new service" @click="handleOpenServiceForm" color="primary"/>
      </div>
   <services-list/>
@@ -17,7 +17,9 @@
   import ServicesList from 'components/ServicesList';
   import ServiceForm from 'components/ServiceForm';
   import useServices from 'src/composables/useServices';
+  import {useAuth} from 'stores/auth';
   const {handleOpenServiceForm,openServiceForm,serviceToEdit} = useServices();
+  const authStore = useAuth();
 </script>
 <style lang="css" scoped>
 

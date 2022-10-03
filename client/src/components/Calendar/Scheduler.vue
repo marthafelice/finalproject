@@ -17,18 +17,27 @@
       </q-toggle>
     </div>
     <DayPilotCalendar id="dp" :config="config" ref="calendar"/>
+    <manage-reservation-form v-model="openManageReservation" :reservation="reservationToEdit"/>
   </div>
 </template>
 
 <script setup>
   import {DayPilotCalendar} from '@daypilot/daypilot-lite-vue';
-  import {computed, ref, watch} from 'vue';
+  import {computed, defineAsyncComponent, ref, watch} from 'vue';
   import {date, colors} from 'quasar';
   import useFindPaginate from 'src/composables/useFindPaginate';
   import {models} from 'feathers-pinia';
 
+  const  ManageReservationForm = defineAsyncComponent(()=>import( 'components/ManageReservationForm'));
+
   const props = defineProps({
     accountType: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
+    queryProp:{
       type: Object,
       default() {
         return {};
@@ -39,15 +48,18 @@
   const config = ref({
     viewType: 'Week',
     durationBarVisible: true,
+    onEventClick: onEventClick,
   });
   const calendar = ref(null);
+  const openManageReservation = ref(false);
+  const reservationToEdit = ref(false);
 
   const control = computed(() => calendar.value.control);
   const {addToDate} = date;
   const {getPaletteColor} = colors;
 
   const reservationsQuery = computed(() => ({
-    accountType: props.accountType,
+    ...props.queryProp
   }));
   const reservationsParams = computed(() => ({
     debounce: 500,
@@ -79,41 +91,32 @@
           color = 'positive';
           break;
       }
-      const ownerType = props?.accountType?.Model === 'employees' ? 'customerAccount' : 'employeeAccount';
-      console.log({services: reservation.serviceObject.serviceName});
+      // const ownerType = props?.accountType?.Model === 'customers' ? 'customerAccount' : 'employeeAccount';
+
       const html = `
-          <div>
+          <div style="position: relative;">
         <div class="q-ml-none" style="width: 100%; height:20%;">
           <img
           crossorigin="anonymous"
           src="${reservation?.serviceObject?.serviceImage}"
-          style="width: 100%; height: 100%; object-fit: cover;"
+          style="width: 90%; height: 90%; object-fit: cover;"
           alt="${reservation?.serviceObject?.serviceName}"/>
         </div>
 
-        <div class="column items-center">
+        <div style="position:absolute; top:15px; left:20%; opacity:0.9;" class="column items-center bg-accent q-pa-sm">
           <span class="text-caption text-bold text-center">${reservation?.serviceObject?.serviceName}</span>
-          <div class="row q-gutter-xs" style="${props?.accountType?.Model ? 'visibility: visible;' : 'visibility: hidden;'}">
-              <div class="avatar" style="
-              width: 20px;
-    height: 20px;
-    border-radius:100px;
-    background-size: contain;
-    background-origin: border-box;
-               background: url(${reservation[ownerType]?.avatar});
-               ">
-               </div>
-               <span class="text-caption">${reservation[ownerType]?.name}</span>
-          </div>
+          <span class="text-caption text-bold text-center">${reservation?.serviceObject?.serviceCost}/=</span>
+
         </div>
 
       </div>
 
         `;
+      const hours = reservation?.serviceObject?.serviceDuration;
       return {
         id: reservation?._id,
         start: reservation?.reservationTime,
-        end: addToDate(reservation?.reservationTime, {hours: reservation?.serviceObject?.serviceDuration}),
+        end: addToDate(reservation?.reservationTime, {hours}),
         html,
         barBackColor: getPaletteColor('grey-4'),
         barColor: getPaletteColor('primary'),
@@ -127,6 +130,12 @@
     console.log(newVal);
     control.value?.update({events: newVal});
   }, {deep: true});
+
+  async function onEventClick(args) {
+    reservationToEdit.value = await models.api.Reservations.get(args?.e?.data?.id);
+    openManageReservation.value = true;
+  }
+
 
 </script>
 <style lang="css" scoped>

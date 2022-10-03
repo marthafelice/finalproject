@@ -1,6 +1,6 @@
 <template>
   <div v-if="!isAuthenticated">
-    <q-btn color="accent" @click="open=true">Register</q-btn>
+    <q-btn color="accent" @click="open=true" v-bind="$attrs">Register</q-btn>
     <auth-form @submit="onSubmit" v-model="open">
       <template #Submit-button>
         <q-btn no-caps color="primary" label="Sign up" type="submit"/>

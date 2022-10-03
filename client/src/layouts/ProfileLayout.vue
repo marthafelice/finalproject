@@ -96,7 +96,12 @@
   const authStore = useAuth();
 
 
-  const id = computed(() => route?.params?.id || authStore?.payload?.activeAccount);
+  const id = computed(() => {
+    if (authStore?.payload?.activeAccount) {
+      return authStore?.payload?.activeAccount;
+    }
+    return route?.params?.id;
+  });
 
   const {item: account} = useGet({
     model: models.api.Accounts,
@@ -113,12 +118,12 @@
           icon: 'fas fa-users',
           link: '/accounts',
         },
-        {
-          title: 'Reservations',
-          caption: 'Manage Orders',
-          icon: 'chat',
-          link: '/reservations',
-        },
+        // {
+        //   title: 'Reservations',
+        //   caption: 'Manage Orders',
+        //   icon: 'chat',
+        //   link: '/reservations',
+        // },
         {
           title: 'Services',
           caption: 'Saloon Services',
@@ -126,7 +131,7 @@
           link: '/services',
         },
       ];
-      if(authStore?.payload?.roles==='admin'){
+      if (authStore?.payload?.roles === 'admin') {
         essentialLinks.value = [
           {
             title: 'Accounts',
