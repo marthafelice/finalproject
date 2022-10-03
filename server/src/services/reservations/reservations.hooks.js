@@ -60,7 +60,7 @@ async function manageReservationsRel(hook) {
       await hook.app.service('salon-services').patch(service, reservationPatchData, hook.params);
     }
     if (employee) {
-      await hook.app.service('employees').patch(employee, reservationPatchData, hook.params);
+      await hook.app.service('employees')._patch(employee, reservationPatchData, hook.params);
     }
 
   }

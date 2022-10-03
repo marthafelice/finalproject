@@ -113,12 +113,12 @@
           icon: 'fas fa-users',
           link: '/accounts',
         },
-        {
-          title: 'Reservations',
-          caption: 'Manage Orders',
-          icon: 'chat',
-          link: '/reservations',
-        },
+        // {
+        //   title: 'Reservations',
+        //   caption: 'Manage Orders',
+        //   icon: 'chat',
+        //   link: '/reservations',
+        // },
         {
           title: 'Services',
           caption: 'Saloon Services',

@@ -44,6 +44,10 @@
   //const $router = useRouter();
   const authStore = useAuth();
 
+  const query = authStore?.payload?.roles==='admin' ? {}: {
+    login: authStore?.payload?._id,
+  };
+
   const {
     handleDeleteAccount,
     handleOpenAccountForm,
@@ -51,9 +55,7 @@
     accountToEdit,
     openAccountForm,
   } = useAccounts({
-    query: {
-      login: authStore?.payload?._id,
-    }
+    query
   });
 
   async function navigateToAccount(accountId) {

@@ -7,7 +7,7 @@
             transition-show="fade-in"
             transition-hide="fade-out"
   >
-    <q-card class="q-pa-sm column items-center bg-primary text-white" >
+    <q-card class="q-pa-sm column items-center bg-primary text-white">
 
       <q-form
         :style="`height:100%; ${$q.screen.gt.sm ? 'width: 20rem;':''}`"
@@ -16,9 +16,9 @@
         class="q-mt-none q-gutter-lg q-pa-md"
       >
 
-          <slot name="title" >
-            <h5 class="text-center text-white">{{employee?._id? 'Edit': 'New'}} Employee</h5>
-          </slot>
+        <slot name="title">
+          <h5 class="text-center text-white">{{ employee?._id ? 'Edit' : 'New' }} Employee</h5>
+        </slot>
         <select-input @input-value="search = $event"
                       @input="$emit('input', $event)"
                       @keydown="preventSpecialCharacter($event)"
@@ -67,7 +67,7 @@
 
           <template v-slot:after-options v-if="$lget(services,'length') < servicesTotal">
             <q-item>
-              <q-item-section @click="servicesCurrentPage +=1">
+              <q-item-section @click="currentPg +=1">
                 <div>
                   <div>Load More
                     <q-icon name="add" size="sm"/>
@@ -85,7 +85,7 @@
                   <q-img
                     v-if="$lget(scope.opt, 'serviceImage')"
                     crossorigin="anonymous"
-                       :src="$lget(scope.opt, 'serviceImage', '')"/>
+                    :src="$lget(scope.opt, 'serviceImage', '')"/>
                   <template v-else>{{ $lget(scope.opt, 'serviceName', '').charAt(0) }}</template>
                 </q-avatar>
               </q-item-section>
@@ -101,15 +101,18 @@
           bg-color="grey-4"
           label-color="dark"
           v-model="formData.workingDays"
-          :options="['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']"
+          :options="workingDaysOption"
+          map-options
+          option-value="day"
+          option-label="label"
+          emit-value
           label="Working Days"
           multiple
-          emit-value
           dense
           use-chips
         />
-          <div class="q-pt-lg row justify-between q-gutter-sm">
-          <q-btn label="Close" type="reset" color="white" outline class="q-ml-sm" />
+        <div class="q-pt-lg row justify-between q-gutter-sm">
+          <q-btn label="Close" type="reset" color="white" outline class="q-ml-sm"/>
 
           <slot name="Submit-button">
             <q-btn :label="employee?._id ? 'Update':'Save'" type="submit" color="secondary"/>
@@ -132,32 +135,64 @@
   import AccountAvatar from 'components/AccountAvatar';
 
   const $q = useQuasar();
-  const props = defineProps(['modelValue','account','employee']);
-  const $emit = defineEmits(['submit','update:model-value']);
+  const props = defineProps(['modelValue', 'account', 'employee']);
+  const $emit = defineEmits(['submit', 'update:model-value']);
 
-  let  formData = ref({});
-  let  maximizedToggle = ref(true);
+  let formData = ref({});
+  let maximizedToggle = ref(true);
   let search = ref('');
+  let currentPg = ref(1);
+
+  let workingDaysOption = ref([
+    {
+      day: 1,
+      label: 'Monday',
+    },
+    {
+      day: 2,
+      label: 'Tuesday',
+    },
+    {
+      day: 3,
+      label: 'Wednesday',
+    },
+    {
+      day: 4,
+      label: 'Thursday',
+    },
+    {
+      day: 5,
+      label: 'Friday',
+    },
+    {
+      day: 6,
+      label: 'Saturday',
+    },
+    {
+      day: 7,
+      label: 'Sunday',
+    },
+  ]);
   // let  disabledDates = ref({ weekdays: [1] });
 
-  watch(()=>props.employee,(newVal)=>{
-    if(newVal) {
+  watch(() => props.employee, (newVal) => {
+    if (newVal) {
       formData.value = new models.api.Employees(newVal);
-    }else{
+    } else {
       formData.value = new models.api.Employees();
     }
-  },{
+  }, {
     immediate: true,
-    deep: true
+    deep: true,
   });
 
-  const selectAttrs = computed(()=>({
-    filled:true,
+  const selectAttrs = computed(() => ({
+    filled: true,
     dense: true,
-    'use-chips':true,
-    'bg-color':'grey-4',
+    'use-chips': true,
+    'bg-color': 'grey-4',
     label: 'Assign Services',
-    'label-color':'dark',
+    'label-color': 'dark',
     // eslint-disable-next-line no-unused-vars
     filterFn(val, update, abort) {
       update(() => {
@@ -165,21 +200,21 @@
     },
     'fill-input': false,
     'map-options': true,
-    'emit-value':true,
+    'emit-value': true,
     'option-value': '_id',
     'option-label': 'serviceName',
     multiple: true,
     'hide-selected': false,
     behavior: 'menu',
     style: 'border-radius: 0.6em; overflow: hidden;',
-    options:services.value
+    options: services.value,
   }));
-  const searchAcctAttrs = computed(()=>({
-    filled:true,
+  const searchAcctAttrs = computed(() => ({
+    filled: true,
     dense: true,
-    'bg-color':'grey-4',
+    'bg-color': 'grey-4',
     label: 'Select Employee Account',
-    'label-color':'dark',
+    'label-color': 'dark',
     // eslint-disable-next-line no-unused-vars
     filterFn(val, update, abort) {
       update(() => {
@@ -190,58 +225,67 @@
     'option-value': '_id',
     'option-label': 'name',
     multiple: false,
-    'emit-value':true,
+    'emit-value': true,
     'hide-selected': false,
     behavior: 'menu',
     style: 'border-radius: 0.6em; overflow: hidden;',
-    options:searchAccounts.value,
+    options: searchAccounts.value,
   }));
 
-  const employeeServicesQuery = computed(()=>({}));
-  const employeeServicesParams = computed(()=>({
-    debounce: 500
+  const employeeServicesQuery = computed(() => ({}));
+  const employeeServicesParams = computed(() => ({
+    debounce: 500,
   }));
-  const {items: services, itemsCount: servicesTotal, currentPage: servicesCurrentPage } = useFindPaginate({
+  const {items: services, itemsCount: servicesTotal, currentPage: servicesCurrentPage} = useFindPaginate({
     model: models.api.Services,
     qid: ref('employeeServices'),
     query: employeeServicesQuery,
     params: employeeServicesParams,
     limit: ref(5),
-    infinite: ref(true)
+    infinite: ref(true),
   });
-  const searchAccountsQuery = computed(()=>({
-    'accountType.Model':{$ne:'employees'}
+
+  watch(() => servicesCurrentPage.value, (newVal) => {
+    currentPg.value = newVal;
+  }, {});
+
+  const searchAccountsQuery = computed(() => ({
+    'accountType.Model': {$ne: 'employees'},
   }));
-  const searchAccountsParams = computed(()=>({
-    debounce: 500
+  const searchAccountsParams = computed(() => ({
+    debounce: 500,
   }));
-  const {items: searchAccounts, itemsCount: searchAccountsTotal, currentPage: searchAccountsCurrentPage } = useFindPaginate({
+  const {
+    items: searchAccounts,
+    itemsCount: searchAccountsTotal,
+    currentPage: searchAccountsCurrentPage,
+  } = useFindPaginate({
     model: models.api.Accounts,
     qid: ref('searchAccountsServices'),
     query: searchAccountsQuery,
     params: searchAccountsParams,
     limit: ref(5),
-    infinite: ref(true)
+    infinite: ref(true),
   });
 
-  function  preventSpecialCharacter(e) {
+  function preventSpecialCharacter(e) {
     if (/[^\w ]/.test(e.key)) {
       e.preventDefault();
     }
   }
 
-  async function onSubmit(){
-    try{
+  async function onSubmit() {
+    try {
       await formData.value.save();
       onReset();
       $q.notify({
         type: 'positive',
-        message: 'Employee saved!'
+        message: 'Employee saved!',
       });
     } catch (e) {
       $q.notify({
         type: 'negative',
-        message: e.message
+        message: e.message,
       });
     }
   }
@@ -249,13 +293,13 @@
   function onReset() {
     formData.value = new models.api.Employees();
     $emit('update:model-value', false);
-  // open.value = false;
+    // open.value = false;
   }
 
 
- /* function isValidHours(hour, { weekday }) {
-    return ![1, 7].includes(weekday) || (hour >=8 && hour <= 17);
-  }*/
+  /* function isValidHours(hour, { weekday }) {
+     return ![1, 7].includes(weekday) || (hour >=8 && hour <= 17);
+   }*/
 </script>
 
 <style scoped>

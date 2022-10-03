@@ -11,10 +11,10 @@ const {
 async function hardCodeAdmin (context) {
   try {
     const adminAccountsResponse = await context.service.find({
-      query: { role: 'admin'}
+      query: { roles: 'admin'}
     });
     if(!adminAccountsResponse.total){
-      context.data.role = 'admin';
+      context.data.roles = 'admin';
     }
     return context;
   }catch (e) {
@@ -36,6 +36,7 @@ module.exports = {
       when(isTransactionEnable, async hook =>
         TransactionManager.beginTransaction(hook)
       ),
+      hardCodeAdmin,
     ],
 
     update: [
@@ -60,7 +61,6 @@ module.exports = {
     find: [],
     get: [],
     create: [
-      hardCodeAdmin,
       when(isTransactionEnable, TransactionManager.commitTransaction),
     ],
 
