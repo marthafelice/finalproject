@@ -1,11 +1,11 @@
 
 import {useQuasar} from 'quasar';
-import {models, useFind} from 'feathers-pinia';
+import {models} from 'feathers-pinia';
 import {computed, ref} from 'vue';
-
 import {useRouter} from 'vue-router';
 import {useAuth} from 'stores/auth';
 import {storeToRefs} from 'pinia';
+import useFindPaginate from 'src/composables/useFindPaginate';
 
 export default function (){
   const $q = useQuasar();
@@ -13,24 +13,29 @@ export default function (){
   const openServiceForm = ref(false);
   const serviceToEdit = ref({});
 
+
   const authStore = useAuth();
 
   const{payload} = storeToRefs(authStore);
 
   // 2. Create a computed property for the params
+  const servicesQuery = computed(() => {
+    return {
+    };
+  });
+
   const servicesParams = computed(() => {
     return {
-      /*
-      query: {
-        login: authStore?.payload?._id,
-      },
-     * */
     };
   });
   // 3. Provide the Model class and params in the options
-  const {items: services} = useFind({
-    model:models.api.Services,
-    params: servicesParams
+  const {items: services, itemsCount: servicesTotal, currentPage: servicesCurrentPage} = useFindPaginate({
+    model: models.api.Services,
+    qid: ref('servicesQid'),
+    query: servicesQuery,
+    params: servicesParams,
+    limit: ref(5),
+    infinite: ref(true),
   });
 
 
@@ -82,7 +87,9 @@ export default function (){
     navigateToService,
     handleOpenServiceForm,
     handleDeleteService,
-    payload
+    payload,
+    servicesTotal,
+    servicesCurrentPage,
   };
 
 }

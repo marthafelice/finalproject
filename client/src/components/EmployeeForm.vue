@@ -133,6 +133,7 @@
   import SelectInput from 'components/SelectInput';
   import useFindPaginate from 'src/composables/useFindPaginate';
   import AccountAvatar from 'components/AccountAvatar';
+  import useServices from 'src/composables/useServices';
 
   const $q = useQuasar();
   const props = defineProps(['modelValue', 'account', 'employee']);
@@ -232,18 +233,8 @@
     options: searchAccounts.value,
   }));
 
-  const employeeServicesQuery = computed(() => ({}));
-  const employeeServicesParams = computed(() => ({
-    debounce: 500,
-  }));
-  const {items: services, itemsCount: servicesTotal, currentPage: servicesCurrentPage} = useFindPaginate({
-    model: models.api.Services,
-    qid: ref('employeeServices'),
-    query: employeeServicesQuery,
-    params: employeeServicesParams,
-    limit: ref(5),
-    infinite: ref(true),
-  });
+
+  const {services, servicesTotal, servicesCurrentPage} = useServices();
 
   watch(() => servicesCurrentPage.value, (newVal) => {
     currentPg.value = newVal;
