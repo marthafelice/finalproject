@@ -22,13 +22,14 @@
           </h5>
           <q-card flat class="bg-primary text-white" dark style="z-index:1000; margin-top:-11px; margin-bottom: 10px;">
             <q-card-section class="text-caption text-center">
-              (For {{service.serviceName}})
+              (For {{ service.serviceName }})
             </q-card-section>
           </q-card>
         </slot>
 
         <div class="q-gutter-md column items-center">
-          <q-date v-model="formData.reservationTime" mask="YYYY-MM-DD HH:mm" dark style="z-index:1; margin-top:-10px;" today-btn/>
+          <q-date v-model="formData.reservationTime" mask="YYYY-MM-DD HH:mm" dark style="z-index:1; margin-top:-10px;"
+                  today-btn :options="optionsFn"/>
           <q-time
             style="margin-top: -20px;"
             dark
@@ -45,7 +46,8 @@
           <q-btn label="Close" type="reset" color="white" outline class="q-ml-sm"/>
 
           <slot name="Submit-button">
-            <q-btn :label="reservation?._id ? 'Update':'Save'" type="submit" color="secondary" :disabled="!formData.reservationTime"/>
+            <q-btn :label="reservation?._id ? 'Update':'Save'" type="submit" color="secondary"
+                   :disabled="!formData.reservationTime"/>
           </slot>
 
         </div>
@@ -63,7 +65,7 @@
         </div>
         <q-btn color="dark" icon="close" @click="$emit('update:model-value',false)"
                class="absolute"
-       style="bottom:30px;"
+               style="bottom:30px;"
         />
       </div>
     </q-card>
@@ -73,11 +75,12 @@
 <script setup>
   import RegistrationForm from 'components/RegistrationForm';
   import LoginForm from 'components/LoginForm';
-  import {ref, watch} from 'vue';
+  import {computed, ref, watch} from 'vue';
   import {models} from 'feathers-pinia';
-  import {useQuasar} from 'quasar';
+  import {date, useQuasar} from 'quasar';
   import {useAuth} from 'stores/auth';
   import useCustomers from 'stores/services/customers';
+  import useReservations from 'src/composables/useReservations';
 
 
   const $q = useQuasar();
@@ -96,12 +99,28 @@
     if (newVal._id) {
       formData.value = new models.api.Reservations(newVal);
     } else {
-      formData.value = new models.api.Reservations({service:props?.service?._id});
+      formData.value = new models.api.Reservations({service: props?.service?._id});
     }
   }, {
     immediate: true,
     deep: true,
   });
+
+
+  const {
+    reservations,
+  } = useReservations();
+
+  const reservationDates = computed(() => reservations.value.map(reservation => date.formatDate(reservation.reservationTime, 'YYYY-MM-DD HH:mm')));
+
+  function optionsFn(dt) {
+    const diff = date.getDateDiff(dt, date.formatDate(Date.now(), 'YYYY-MM-DD HH:mm'));
+    if (reservationDates.value) {
+      const theDate = date.formatDate(dt, 'YYYY-MM-DD HH:mm');
+      return diff>=0 || reservationDates.value.includes(theDate);
+    }
+    return diff>=0;
+  }
 
 
   async function onSubmit() {
