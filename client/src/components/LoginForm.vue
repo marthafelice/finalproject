@@ -1,7 +1,7 @@
 <template>
 
  <div v-if="!isAuthenticated">
-   <q-btn color="accent" @click="open=true">Login</q-btn>
+   <q-btn color="accent" @click="open=true" v-bind="$attrs">Login</q-btn>
    <auth-form @submit="onLogin" v-model="open">
      <template #title>
        <h5>Login Form</h5>

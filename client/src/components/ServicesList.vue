@@ -1,8 +1,8 @@
 <template>
   <div class="column items-center">
     <div v-if="!openReservationForm" class="q-pa-md row justify-around" style="max-width: 400px">
-      <registration-form class="q-mx-sm"/>
-      <login-form class="q-mx-sm"/>
+      <registration-form class="q-mx-sm" color="primary"/>
+      <login-form class="q-mx-sm" color="primary"/>
     </div>
   <div :class="[$q.screen.width> 350?'row':'row', 'justify-center q-gutter-sm wrap']" >
   <q-card
