@@ -35,7 +35,6 @@ export default route(function (/* { store, ssrContext } */) {
     if(jwt) {
     const  authUser =  await authStore.authenticate(); // jwt auth
     authStore.payload = authUser?.login;
-
     }
     if (to.meta.requiresAuth && !authStore.isAuthenticated) return '/'; //protected pg && authenticated
 
