@@ -34,7 +34,7 @@ export default function (){
     qid: ref('servicesQid'),
     query: servicesQuery,
     params: servicesParams,
-    limit: ref(5),
+    limit: ref(10),
     infinite: ref(true),
   });
 

@@ -1,10 +1,10 @@
 <template>
-  <div class="column items-center">
+  <div class="column items-center" v-scroll="onscroll">
     <div v-if="!openReservationForm" class="q-pa-md row justify-around" style="max-width: 400px">
       <registration-form class="q-mx-sm" color="primary"/>
       <login-form class="q-mx-sm" color="primary"/>
     </div>
-    <div :class="[$q.screen.width> 350?'row':'row', 'justify-center q-gutter-sm wrap']" rel="el">
+    <div :class="[$q.screen.width> 350?'row':'row', 'justify-center q-gutter-sm wrap']" >
       <q-card
         style="min-width: 240px;"
         @click="navigateToService(service._id)"
@@ -77,21 +77,9 @@
   import ReservationForm from 'components/ReservationForm';
   import RegistrationForm from 'components/RegistrationForm';
   import LoginForm from 'components/LoginForm';
-  import {useScroll} from '@vueuse/core';
-  import {onUpdated, ref} from 'vue';
+  import {vScroll} from '@vueuse/components';
+  import $lget from 'lodash.get';
 
-  const el = ref(null);
-
-  const {isScrolling, arrivedState, directions} = useScroll(el);
-
-  onUpdated(() => {
-    if (!isScrolling && arrivedState) {
-      console.log({
-        directions, servicesTotal,
-        servicesCurrentPage,
-      });
-    }
-  });
 
   const {
     serviceToEdit,
@@ -105,6 +93,12 @@
     servicesCurrentPage,
   } = useServices();
 
+  function onscroll(state){
+    console.log({state});
+    if($lget(services.value,'length') < servicesTotal){
+      servicesCurrentPage.value +=1;
+    }
+  }
 
   const {
     openReservationForm,
