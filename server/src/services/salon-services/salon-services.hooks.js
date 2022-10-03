@@ -7,17 +7,25 @@ const {when} = require('feathers-hooks-common');
 async function assignEmployeeHook(hook) {
   if (hook.type === 'after') {
     const salonServicesId = hook.result._id;
-    // patch accounts in the login model
-    let salonServicePatchData = {
-      $addToSet: {services: salonServicesId}
-    };
-    const affectedEmployees = hook.result.employees;
-    hook.params.query = {
-      _id: {
-        $in: affectedEmployees
+    if(salonServicesId) {
+
+      // patch accounts in the login model
+      let salonServicePatchData = {
+        $addToSet: {services: salonServicesId}
+      };
+      if(hook.method === 'remove') {
+        salonServicePatchData = {
+          $pull: {services: salonServicesId}
+        };
       }
-    };
-    await hook.app.service('employees').patch(null, salonServicePatchData, hook.params);
+      const affectedEmployees = hook.result.employees;
+      hook.params.query = {
+        _id: {
+          $in: affectedEmployees
+        }
+      };
+      await hook.app.service('employees').patch(null, salonServicePatchData, hook.params);
+    }
   }
 
 }
@@ -32,7 +40,7 @@ module.exports = {
       when(isTransactionEnable, async hook =>
         TransactionManager.beginTransaction(hook)
       ),
-      //manageSalonServicesRel
+      assignEmployeeHook
     ],
 
     update: [
@@ -46,6 +54,9 @@ module.exports = {
     ],
     remove: [
       authenticate('jwt'),
+      when(isTransactionEnable, async hook => TransactionManager.beginTransaction(hook)
+      ),
+      assignEmployeeHook
     ]
   },
 
@@ -54,7 +65,7 @@ module.exports = {
     find: [],
     get: [],
     create: [
-      //manageSalonServicesRel,
+      assignEmployeeHook,
       when(isTransactionEnable, TransactionManager.commitTransaction),
     ],
 
@@ -63,7 +74,10 @@ module.exports = {
       assignEmployeeHook,
       when(isTransactionEnable, TransactionManager.commitTransaction),
     ],
-    remove: []
+    remove: [
+      assignEmployeeHook,
+      when(isTransactionEnable, TransactionManager.commitTransaction),
+    ]
   },
 
   error: {

@@ -1,19 +1,84 @@
 const {TransactionManager} = require('feathers-mongoose');
 const isTransactionEnable = true;
 const {authenticate} = require('@feathersjs/authentication').hooks;
-const {when} = require('feathers-hooks-common');
+const {when, fastJoin} = require('feathers-hooks-common');
 
-async function accountTypeHook (hook) {
+const employeesResolvers = {
+  joins: {
+    reservations:
+      () =>
+        async (employee, {app}) => {
+          employee['reservationsObject'] =
+            await app.service('reservations').find({
+              query: {
+                _id: {
+                  $in: employee.reservations,
+                },
+                $select: ['status', 'reservationTime', 'customer', 'service'],
+              },
+            });
+        },
+    account:
+      () =>
+        async (employee, {app}) => {
+
+          const {total, data} = await app.service('accounts').find({
+            query: {
+              _id: employee.account
+            }
+          });
+          employee['employeeAccount'] = total? data[0]: undefined;
+        },
+  },
+
+};
+
+async function accountTypeHook(hook) {
   if (hook.type === 'after') {
     const employeeId = hook.result._id;
     const accountId = hook.result.account;
-    // patch accounts in the login model
-    let accountTypePatchData = {
-      $addToSet: {accountType: employeeId},
-      accountModel: 'employees'
-    };
-    await hook.app.service('accounts').patch(accountId, accountTypePatchData, hook.params);
+    const services = hook.result.services;
+    if (accountId) {
+      // patch accounts in the login model
+      let accountTypePatchData = {
+        $addToSet: {
+          accountType: {
+            _id: employeeId,
+            Model: 'employees',
+          },
+        },
 
+      };
+      if (hook.method === 'remove') {
+        accountTypePatchData = {
+          $pull: {
+            accountType: {
+              _id: employeeId,
+              Model: 'employees',
+            },
+          },
+
+        };
+      }
+
+      await hook.app.service('accounts').patch(accountId, accountTypePatchData);
+
+    }
+    if (services && services.length) {
+      let servicesQueryParams = {
+        query: {
+          _id: {$in: services},
+        },
+      };
+      let servicesPatchObj = {
+        $addToSet: {employees: employeeId},
+      };
+      hook.params.query = {
+        ...hook.params.query,
+        ...servicesQueryParams,
+      };
+      await hook.app.service('salon-services').patch(null, servicesPatchObj, hook.params);
+    }
   }
 }
 
@@ -24,31 +89,41 @@ module.exports = {
     get: [],
     create: [
       when(isTransactionEnable, async hook =>
-        TransactionManager.beginTransaction(hook)
+        TransactionManager.beginTransaction(hook),
       ),
       accountTypeHook,
     ],
 
     update: [],
-    patch: [when(isTransactionEnable, async hook => TransactionManager.beginTransaction(hook)
-    )
+    patch: [
+      when(isTransactionEnable, async hook => TransactionManager.beginTransaction(hook)),
+      accountTypeHook,
     ],
 
-    remove: []
+    remove: [
+      when(isTransactionEnable, async hook => TransactionManager.beginTransaction(hook)),
+      accountTypeHook,
+    ],
   },
 
   after: {
-    all: [],
+    all: [fastJoin(employeesResolvers)],
     find: [],
     get: [],
     create: [
       accountTypeHook,
-      when(isTransactionEnable, TransactionManager.commitTransaction)
+      when(isTransactionEnable, TransactionManager.commitTransaction),
     ],
 
     update: [],
-    patch: [when(isTransactionEnable, TransactionManager.commitTransaction)],
-    remove: []
+    patch: [
+      accountTypeHook,
+      when(isTransactionEnable, TransactionManager.commitTransaction),
+    ],
+    remove: [
+      accountTypeHook,
+      when(isTransactionEnable, TransactionManager.commitTransaction),
+    ],
   },
 
   error: {
@@ -58,6 +133,6 @@ module.exports = {
     create: [when(isTransactionEnable, TransactionManager.rollbackTransaction)],
     update: [],
     patch: [when(isTransactionEnable, TransactionManager.rollbackTransaction)],
-    remove: []
-  }
+    remove: [],
+  },
 };

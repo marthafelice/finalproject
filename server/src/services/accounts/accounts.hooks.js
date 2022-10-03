@@ -8,17 +8,28 @@ async function manageLoginAccountRel(hook) {
   const isAuthenticated = hook.params.authenticated;
   if (isAuthenticated) {
     const loginId = hook.params.login._id;
-    if (hook.type === 'before') {
+    if (hook.type === 'before' && hook.method !=='remove') {
       // adding loginId to data
       hook.data.login = loginId;
     }
     if (hook.type === 'after') {
       const accountId = hook.result._id;
-      // patch accounts in the login model
-      let loginPatchData = {
-        $addToSet: {accounts: accountId}
-      };
-      await hook.app.service('logins').patch(loginId, loginPatchData, hook.params);
+      if(loginId){
+        // patch accounts in the login model
+        let loginPatchData = {
+          $addToSet: {accounts: accountId}
+        };
+        if(!hook.params.login.activeAccount){
+          loginPatchData.activeAccount = hook.result._id;
+        }
+        if(hook.method === 'remove') {
+          loginPatchData = {
+            $pull: {accounts: accountId},
+            $unset: {activeAccount: ''}
+          };
+        }
+        await hook.app.service('logins').patch(loginId, loginPatchData, hook.params);
+      }
     }
   }
   return hook;
@@ -35,15 +46,21 @@ let moduleExports = {
       when(isTransactionEnable, async hook =>
         TransactionManager.beginTransaction(hook)
       ),
-      // code transactable
       manageLoginAccountRel
     ],
     update: [],
     patch: [
-      when(isTransactionEnable, async hook => TransactionManager.beginTransaction(hook)
-      )
+      when(isTransactionEnable, async hook =>
+        TransactionManager.beginTransaction(hook)
+      ),
+      manageLoginAccountRel
     ],
-    remove: []
+    remove: [
+      when(isTransactionEnable, async hook =>
+        TransactionManager.beginTransaction(hook)
+      ),
+      manageLoginAccountRel
+    ]
   },
 
   after: {
@@ -58,8 +75,14 @@ let moduleExports = {
       when(isTransactionEnable, TransactionManager.commitTransaction),
     ],
     update: [],
-    patch: [when(isTransactionEnable, TransactionManager.commitTransaction)],
-    remove: []
+    patch: [
+      manageLoginAccountRel,
+      when(isTransactionEnable, TransactionManager.commitTransaction),
+    ],
+    remove: [
+      manageLoginAccountRel,
+      when(isTransactionEnable, TransactionManager.commitTransaction),
+    ]
   },
 
   error: {

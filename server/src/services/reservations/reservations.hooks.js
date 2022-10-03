@@ -1,48 +1,72 @@
 const {TransactionManager} = require('feathers-mongoose');
 const isTransactionEnable = true;
 const {authenticate} = require('@feathersjs/authentication').hooks;
-const {when} = require('feathers-hooks-common');
+const {when, fastJoin} = require('feathers-hooks-common');
+
+const reservationsResolvers = {
+  joins: {
+    service:
+      () =>
+        async (reservation, {app}) => {
+          reservation['serviceObject'] =
+            await app.service('salon-services').get(reservation.service);
+        },
+    customer:
+      () =>
+        async (reservation, {app}) => {
+          const result = await app.service('accounts').find({
+            query: {
+              'accountType._id': reservation.customer
+            },
+          });
+
+          reservation['customerAccount'] = result.total ? result.data[0] : [];
+        },
+  },
+  employee:
+    () =>
+      async (reservation, {app}) => {
+        const result = await app.service('accounts').find({
+          query: {
+            'accountType._id': reservation.employee,
+            'accountType.Model': 'employees',
+          },
+        });
+
+        reservation['employeeAccount'] = result.total ? result.data[0] : [];
+      },
+
+};
 
 async function manageReservationsRel(hook) {
   // console.log(JSON.parse(JSON.stringify(hook)));
-  const isAuthenticated = hook.params.authenticated;
-  if (isAuthenticated) {
-    const customer = hook.data.customer || hook.params.customer;
-    if (hook.type === 'before') {
-      // adding loginId to data
-
-      hook.data.customer = customer;
-
-
-      const service = hook.data.service ||  hook.params.service;
-      const employee = hook.data.employee || hook.params.employee;
-
-      if (service && !employee) {
-        hook.data.$addToSet = {'assignments.service': service};
-      }
-
-      if (service && employee) {
-        hook.data.$addToSet = {'assignments.service': service, 'assignments.employee': employee};
-        hook.params.query = {'assignments.service': service};
-      }
-
-      if (hook.type === 'after') {
-        const reservationId = hook.result._id;
-        // patch accounts in the login model
-        let reservationPatchData = {
-          $addToSet: {reservations: reservationId}
-        };
-        await Promise.all([
-          hook.app.service('customers').patch(customer,reservationPatchData, hook.params),
-          hook.app.service('service').patch(service,reservationPatchData, hook.params),
-          hook.app.service('employee').patch(employee,reservationPatchData, hook.params),
-        ]);
-
-      }
+  if (hook.type === 'after') {
+    const reservationId = hook.result._id;
+    const {customer, service, employee} = hook.result;
+    // patch accounts in the login model
+    let reservationPatchData = {
+      $addToSet: {reservations: reservationId},
+    };
+    if (hook.method === 'remove') {
+      reservationPatchData = {
+        $pull: {reservations: reservationId},
+      };
     }
-    return hook;
+
+    if (customer) {
+      await hook.app.service('customers').patch(customer, reservationPatchData, hook.params);
+    }
+    if (service) {
+      await hook.app.service('salon-services').patch(service, reservationPatchData, hook.params);
+    }
+    if (employee) {
+      await hook.app.service('employees')._patch(employee, reservationPatchData, hook.params);
+    }
+
   }
+
 }
+
 
 module.exports = {
   before: {
@@ -51,22 +75,25 @@ module.exports = {
     get: [],
     create: [
       when(isTransactionEnable, async hook =>
-        TransactionManager.beginTransaction(hook)
+        TransactionManager.beginTransaction(hook),
       ),
-      manageReservationsRel
+      manageReservationsRel,
     ],
 
     update: [],
     patch: [
-      when(isTransactionEnable, async hook => TransactionManager.beginTransaction(hook)
-      )
+      when(isTransactionEnable, async hook => TransactionManager.beginTransaction(hook)),
+      manageReservationsRel,
     ],
 
-    remove: []
+    remove: [
+      when(isTransactionEnable, async hook => TransactionManager.beginTransaction(hook)),
+      manageReservationsRel,
+    ],
   },
 
   after: {
-    all: [],
+    all: [fastJoin(reservationsResolvers)],
     find: [],
     get: [],
     create: [
@@ -76,9 +103,13 @@ module.exports = {
 
     update: [],
     patch: [
-      when(isTransactionEnable, TransactionManager.commitTransaction)
+      manageReservationsRel,
+      when(isTransactionEnable, TransactionManager.commitTransaction),
     ],
-    remove: []
+    remove: [
+      manageReservationsRel,
+      when(isTransactionEnable, TransactionManager.commitTransaction),
+    ],
   },
 
   error: {
@@ -88,6 +119,6 @@ module.exports = {
     create: [when(isTransactionEnable, TransactionManager.rollbackTransaction)],
     update: [],
     patch: [when(isTransactionEnable, TransactionManager.rollbackTransaction)],
-    remove: []
-  }
+    remove: [],
+  },
 };

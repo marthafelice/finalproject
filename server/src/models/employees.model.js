@@ -7,10 +7,10 @@ module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient');
   const { Schema } = mongooseClient;
   const schema = new Schema({
-    workingDays:[{ type: String, required: true }],
-    services: [{ type: Schema.Types.ObjectId, required: true, ref: 'services' }],
-    account:{ type: Schema.Types.ObjectId, ref:'accounts' },
-    reservations: [{ type: Schema.Types.ObjectId, ref:'reservations' }]
+    workingDays:[{ type: Number, required: true, enum: [1,2,3,4,5,6,7], }],
+    services: [{ type: Schema.Types.ObjectId, required: true, ref: 'services' }], // done
+    account:{ type: Schema.Types.ObjectId, ref:'accounts' }, // done
+    reservations: [{ type: Schema.Types.ObjectId, ref:'reservations' }] // mostly done -requires testing
   }, {
     timestamps: true
   });

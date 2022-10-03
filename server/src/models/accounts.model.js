@@ -9,11 +9,14 @@ module.exports = function (app) {
   const schema = new Schema({
     name: { type: String, required: true },
     phone: { type: String, required: true },
-    avatar: { type: String, default:'https://www.google.com/#' },
+    avatar: String,
     role: { type: String, enum: ['admin', 'regular'], default: 'regular'},
     login: { type: Schema.Types.ObjectId, ref:'logins' }, //done
-    accountType: [{ type: Schema.Types.ObjectId, refPath:'accountModel' }], // done
-    accountModel: { type: String, enum: ['employees', 'customers'] }, // done
+    accountType: [{
+      _id: {type: Schema.Types.ObjectId, refPath:'Model'},
+      Model: { type: String, enum: ['employees', 'customers'] }, // done
+    }], // done
+
   }, {
     timestamps: true
   });

@@ -7,12 +7,28 @@ async function accountTypeHook (hook) {
   if (hook.type === 'after') {
     const customerId = hook.result._id;
     const accountId = hook.result.account;
-    // patch accounts in the login model
-    let accountTypePatchData = {
-      $addToSet: {accountType: customerId},
-      accountModel: 'customers'
-    };
-    await hook.app.service('accounts').patch(accountId, accountTypePatchData, hook.params);
+    if(accountId){
+      // patch accounts in the login model
+      let accountTypePatchData = {
+        $addToSet: {
+          accountType: {
+            _id: customerId,
+            Model: 'customers'
+          }
+        },
+      };
+      if(hook.method === 'remove') {
+        accountTypePatchData = {
+          $pull: {
+            accountType: {
+              _id: customerId,
+              Model: 'customers'
+            }
+          },
+        };
+      }
+      await hook.app.service('accounts').patch(accountId, accountTypePatchData, hook.params);
+    }
   }
 }
 
@@ -30,10 +46,17 @@ module.exports = {
 
     update: [],
     patch: [
-      when(isTransactionEnable, async hook => TransactionManager.beginTransaction(hook)
-      )
+      when(isTransactionEnable, async hook =>
+        TransactionManager.beginTransaction(hook)
+      ),
+      accountTypeHook
     ],
-    remove: []
+    remove: [
+      when(isTransactionEnable, async hook =>
+        TransactionManager.beginTransaction(hook)
+      ),
+      accountTypeHook
+    ]
   },
 
   after: {
@@ -46,8 +69,14 @@ module.exports = {
     ],
 
     update: [],
-    patch: [when(isTransactionEnable, TransactionManager.commitTransaction)],
-    remove: []
+    patch: [
+      accountTypeHook,
+      when(isTransactionEnable, TransactionManager.commitTransaction),
+    ],
+    remove: [
+      accountTypeHook,
+      when(isTransactionEnable, TransactionManager.commitTransaction),
+    ]
   },
 
   error: {

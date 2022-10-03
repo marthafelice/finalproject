@@ -7,13 +7,11 @@ module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient');
   const {Schema} = mongooseClient;
   const schema = new Schema({
-    status: {type: String, default: 'requested', enum: ['requested', 'confirmed', 'canceled']},
+    status: {type: String, default: 'requested', enum: ['requested', 'confirmed', 'canceled', 'attended to']},
     reservationTime: {type: Date, required: true},//both date and time
     customer: {type: Schema.Types.ObjectId, ref: 'customers'}, // done
-    assignments: [{
-      service: {type: Schema.Types.ObjectId, ref: 'services', required: true}, // mostly done - requires testing
-      employee: {type: Schema.Types.ObjectId, ref: 'employees'}, // mostly done - requires testing
-    }]
+    service: {type: Schema.Types.ObjectId, ref: 'services', required: true}, // mostly done - requires testing
+    employee: {type: Schema.Types.ObjectId, ref: 'employees'}, // mostly done - requires testing
   }, {
     timestamps: true
   });
@@ -26,3 +24,4 @@ module.exports = function (app) {
   return mongooseClient.model(modelName, schema);
 
 };
+

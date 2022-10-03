@@ -11,6 +11,8 @@ module.exports = function (app) {
 
     email: { type: String, unique: true, lowercase: true },
     password: { type: String },
+    roles: {type:String, enum:['admin', 'customer','employee'], default:'customer'},
+    activeAccount: { type: Schema.Types.ObjectId, ref:'accounts' },
     accounts:[ { type: Schema.Types.ObjectId, ref:'accounts' }], // done
 
   }, {
