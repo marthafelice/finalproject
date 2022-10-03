@@ -10,7 +10,7 @@
     <q-card class=" column items-center bg-primary text-white">
       <q-form
         v-if="authStore?.payload?.activeAccount"
-        :style="`height:100%; ${$q.screen.gt.sm ? 'width: 20rem;':''}`"
+        :style="`height:100%; ${$q.screen.gt.sm ? 'width: 25rem;':''}`"
         @submit="onSubmit"
         @reset="onReset"
         class="q-mt-none q-gutter-xs"
@@ -50,16 +50,21 @@
 
         </div>
       </q-form>
-      <div v-if="!authStore?.payload?._id">
+      <div v-if="!authStore?.payload?._id" style="width: 18rem" class="column items-center">
         <h6 class="text-center">To make reservations</h6>
         <p class="text-caption text-center" style="margin-top:-40px;">
           You must have a registered account<br/>
           with our saloon
         </p>
-        <div class="q-pa-md row justify-around" style="max-width: 400px">
+
+        <div class="q-pa-md row justify-around" style="max-width: 20rem">
           <registration-form class="q-mx-sm"/>
           <login-form class="q-mx-sm"/>
         </div>
+        <q-btn color="dark" icon="close" @click="$emit('update:model-value',false)"
+               class="absolute"
+       style="bottom:30px;"
+        />
       </div>
     </q-card>
   </q-dialog>

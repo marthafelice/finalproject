@@ -1,62 +1,50 @@
 <template>
-  <q-page class="column items-center justify-start bg-accent">
+  <q-page :class="[$q.screen.gt.xs?'column items-center justify-start bg-accent':'q-pa-md bg-accent']">
 
     <q-tabs
       v-model="tab"
-      class="text-primary"
+      class="text-primary q-pb-xs"
     >
-      <q-tab name="profile" icon="fas fa-user" label="My Profile"/>
-      <q-tab v-if="customerId" name="reservations" icon="fas fa-pray" label="My Reservations"/>
-      <q-tab v-if="employeeId" name="schedule" icon="fas fa-calendar" label="My Schedule"/>
+      <q-tab class="text-grey-4"  dense v-if="employeeId" name="schedule" icon="fas fa-calendar" label="My Schedule"/>
+      <q-tab class="text-grey-4"  dense v-if="customerId" name="reservations" icon="fas fa-pray" label="My Reservations"/>
+      <q-tab class="text-grey-4"  dense name="profile" icon="fas fa-user" label="My Profile"/>
     </q-tabs>
-    <q-tab-panels class="q-ma-md bg-transparent" v-model="tab">
-      <q-tab-panel name="reservations">
-        <div>
-        <scheduler v-if="customerId" account-type="customers" :query-prop="{customer:customerId}"/>
+    <scheduler v-if="customerId&&tab==='reservations'" account-type="customers" :query-prop="{customer:customerId}"/>
+      <scheduler v-if="employeeId&&tab==='schedule'" account-type="employees" :query-prop="{employee:employeeId}"/>
+    <q-card v-if="tab==='profile'" dark flat class="bg-primary" :style="$q.screen.gt.xs?{minWidth: '35vw'}:{minWidth: '90vw'}">
+      <q-img v-if="account?.avatar" :src="account?.avatar" crossorigin="anonymous"/>
+      <q-card-section>
+
+        <q-fab direction="up"  color="secondary"
+               icon="edit"
+               class="absolute"
+               style="top: 0; right: 35px; transform: translateY(-50%);"
+        >
+          <template v-slot:icon="{ opened }">
+            <q-icon :class="{ 'example-fab-animate--hover': opened !== true }" name="keyboard_arrow_up" />
+          </template>
+
+          <template v-slot:active-icon="{ opened }">
+            <q-icon :class="{ 'example-fab-animate': opened === true }" name="close" />
+          </template>
+
+          <q-fab-action color="secondary" @click="handleDeleteAccount(account)" >
+            <template v-slot:icon>
+              <q-icon name="delete" />
+            </template>
+            <template v-slot:label>
+              Delete Profile
+            </template>
+          </q-fab-action>
+
+          <q-fab-action color="accent" @click="handleOpenAccountForm(account)"   icon="edit" label="Edit Profile" />
+        </q-fab>
+        <div class="column items-center">
+          <h5>{{account?.name}}</h5>
+          <p style="margin-top:-40px;">{{ account?.phone }}</p>
         </div>
-      </q-tab-panel>
-      <q-tab-panel name="schedule">
-        <div>
-          <scheduler v-if="employeeId" account-type="employees" :query-prop="{employee:employeeId}"/>
-        </div>
-      </q-tab-panel>
-      <q-tab-panel class="bg-primary" name="profile">
-      <q-card dark flat class="bg-primary" style="min-width: 35vw">
-        <q-img v-if="account?.avatar" :src="account?.avatar" crossorigin="anonymous"/>
-       <q-card-section>
-
-         <q-fab direction="up"  color="secondary"
-                icon="edit"
-                class="absolute"
-                style="top: 0; right: 35px; transform: translateY(-50%);"
-         >
-           <template v-slot:icon="{ opened }">
-             <q-icon :class="{ 'example-fab-animate--hover': opened !== true }" name="keyboard_arrow_up" />
-           </template>
-
-           <template v-slot:active-icon="{ opened }">
-             <q-icon :class="{ 'example-fab-animate': opened === true }" name="close" />
-           </template>
-
-           <q-fab-action color="secondary" @click="handleDeleteAccount(account)" >
-             <template v-slot:icon>
-               <q-icon name="delete" />
-             </template>
-             <template v-slot:label>
-               Delete Profile
-             </template>
-           </q-fab-action>
-
-           <q-fab-action color="accent" @click="handleOpenAccountForm(account)"   icon="edit" label="Edit Profile" />
-         </q-fab>
-         <div class="column items-center">
-           <h5>{{account?.name}}</h5>
-           <p style="margin-top:-40px;">{{ account?.phone }}</p>
-         </div>
-       </q-card-section>
-      </q-card>
-      </q-tab-panel>
-    </q-tab-panels>
+      </q-card-section>
+    </q-card>
     <account-form v-model="openAccountForm" :account="accountToEdit"/>
   </q-page>
 </template>
