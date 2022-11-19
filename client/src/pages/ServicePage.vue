@@ -50,12 +50,12 @@
 </template>
 
 <script setup>
-  import ServiceForm from 'components/ServiceForm';
+  import ServiceForm from 'components/GalleryForm';
   import ReservationForm from 'components/ReservationForm';
   import {useRoute} from 'vue-router';
   import {computed, ref} from 'vue';
   import {models, useGet} from 'feathers-pinia';
-  import useServices from 'src/composables/useServices';
+  import useServices from 'src/composables/usePhotos';
 
   const $route = useRoute();
 

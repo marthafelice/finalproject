@@ -9,7 +9,7 @@
 
 <script setup>
 
-  import ServicesList from 'components/ServicesList';
+  import ServicesList from 'components/Gallery';
   import {useAuth} from 'stores/auth';
   import LogoutButton from 'components/LogoutButton';
   const authStore = useAuth();

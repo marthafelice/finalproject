@@ -71,8 +71,8 @@
 </template>
 
 <script setup>
-  import ServiceForm from 'components/ServiceForm';
-  import useServices from 'src/composables/useServices';
+  import ServiceForm from 'components/GalleryForm';
+  import useServices from 'src/composables/usePhotos';
   import useReservations from 'src/composables/useReservations';
   import ReservationForm from 'components/ReservationForm';
   import RegistrationForm from 'components/RegistrationForm';
