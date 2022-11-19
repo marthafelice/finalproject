@@ -17,7 +17,7 @@
       >
 
           <slot name="title" >
-            <h5 class="text-center text-white">{{service._id? 'Edit': 'New'}} Service</h5>
+            <h5 class="text-center text-white">{{photo._id? 'Edit': 'New'}} Photo </h5>
           </slot>
 
         <j-file-pond
@@ -33,45 +33,45 @@
           dense
          bg-color="grey-4"
          label-color="dark"
-          v-model="formData.serviceName"
-          label="Service Name *"
+          v-model="formData.title"
+          label="Title*"
           lazy-rules
           required
-          :rules="[ val => $lget(val,'length') > 3 || 'Please enter a valid service name.']"
+          :rules="[ val => $lget(val,'length') > 3 || 'Please enter a valid photo title.']"
         >
           <template #hint>
-            <span class="text-caption text-grey-4">Enter Service Name</span>
+            <span class="text-caption text-grey-4">Enter Photo Title</span>
           </template>
         </q-input>
-        <q-input
-          filled
-          dense
-          bg-color="grey-4"
-          label-color="dark"
-          v-model="formData.serviceCost"
-          label="Service Cost *"
-          mask="######"
-          unmasked-value
-          lazy-rules
-          required
-          :rules="[ val => isCurrency(val,{symbol: 'UGX', require_symbol: false, allow_space_after_symbol: true, symbol_after_digits: true, allow_negatives: false, thousands_separator: ',', allow_decimal: false, allow_space_after_digits: false}) || 'Please enter valid currency']"
-        >
-          <template #hint>
-            <span class="text-caption text-grey-4">Enter Service Cost (ugx 1,690)</span>
-          </template>
-          <template #prepend>
-            <span class="text-caption text-bold ">USH</span>
-          </template>
-          <template #append>
-            <span class="text-caption text-bold ">/=</span>
-          </template>
-        </q-input>
-       <div class="column">
-         <span class="text-caption">
-           Service Duration
-         </span>
-         <vue-number-input v-model="formData.serviceDuration" :min="1" :max="10" inline controls :disabled="formData.serviceDuration>10"/>
-       </div>
+<!--        <q-input-->
+<!--          filled-->
+<!--          dense-->
+<!--          bg-color="grey-4"-->
+<!--          label-color="dark"-->
+<!--          v-model="formData.serviceCost"-->
+<!--          label="Service Cost *"-->
+<!--          mask="######"-->
+<!--          unmasked-value-->
+<!--          lazy-rules-->
+<!--          required-->
+<!--          :rules="[ val => isCurrency(val,{symbol: 'UGX', require_symbol: false, allow_space_after_symbol: true, symbol_after_digits: true, allow_negatives: false, thousands_separator: ',', allow_decimal: false, allow_space_after_digits: false}) || 'Please enter valid currency']"-->
+<!--        >-->
+<!--          <template #hint>-->
+<!--            <span class="text-caption text-grey-4">Enter Service Cost (ugx 1,690)</span>-->
+<!--          </template>-->
+<!--          <template #prepend>-->
+<!--            <span class="text-caption text-bold ">USH</span>-->
+<!--          </template>-->
+<!--          <template #append>-->
+<!--            <span class="text-caption text-bold ">/=</span>-->
+<!--          </template>-->
+<!--        </q-input>-->
+<!--       <div class="column">-->
+<!--         <span class="text-caption">-->
+<!--           Service Duration-->
+<!--         </span>-->
+<!--         <vue-number-input v-model="formData.serviceDuration" :min="1" :max="10" inline controls :disabled="formData.serviceDuration>10"/>-->
+<!--       </div>-->
         <q-input
           filled
           dense
@@ -79,21 +79,21 @@
           label-color="dark"
           type="textarea"
           autogrow
-          v-model="formData.serviceDescription"
-          label="Service Description *"
+          v-model="formData.description"
+          label="Photo Description *"
           lazy-rules
           required
           :rules="[ val => $lget(val,'length') > 15 || 'Description must be more than 15 words']"
         >
           <template #hint>
-          <span class="text-caption text-grey-4">Enter Service Description</span>
+          <span class="text-caption text-grey-4">Enter Photo Description</span>
         </template>
         </q-input>
           <div class="q-pt-lg row justify-between q-gutter-sm">
           <q-btn label="Close" type="reset" color="white" outline class="q-ml-sm" />
 
           <slot name="Submit-button">
-            <q-btn :label="service?._id ? 'Update':'Save'" type="submit" color="secondary"/>
+            <q-btn :label="photo?._id ? 'Update':'Save'" type="submit" color="secondary"/>
           </slot>
 
         </div>
@@ -105,25 +105,25 @@
 <script setup>
   import $lget from 'lodash.get';
   // import $lset from 'lodash.set';
-  import VueNumberInput from '@chenfengyuan/vue-number-input';
+  // import VueNumberInput from '@chenfengyuan/vue-number-input';
   import JFilePond from 'components/j-uploader/JFilePond';
   import {ref, watch} from 'vue';
-  import isCurrency from 'validator/lib/isCurrency';
-  import {models} from 'feathers-pinia';
+  // import isCurrency from 'validator/lib/isCurrency';
+  // import {models} from 'feathers-pinia';
   import {useQuasar} from 'quasar';
 
   const $q = useQuasar();
-  const props = defineProps(['modelValue','service']);
+  const props = defineProps(['modelValue','photo']);
   const $emit = defineEmits(['submit','update:model-value']);
 
   let  formData = ref({});
   let  maximizedToggle = ref(true);
 
-  watch(()=>props.service,(newVal)=>{
+  watch(()=>props.photo,(newVal)=>{
     if(newVal) {
-      formData.value = new models.api.Services(newVal);
+      formData.value = (newVal);
     }else{
-      formData.value = new models.api.Services({});
+      formData.value = {};
     }
   },{
     immediate: true,
@@ -136,7 +136,7 @@
       onReset();
       $q.notify({
         type: 'positive',
-        message: 'Service saved!'
+        message: 'Photo saved!'
       });
     } catch (e) {
       $q.notify({
@@ -147,12 +147,12 @@
   }
 
   function onReset() {
-    formData.value = new models.api.Services({});
+    formData.value = {};
     $emit('update:model-value', false);
   // open.value = false;
   }
   function reverted() {
-    formData.value.serviceImage = null;
+    formData.value.url = null;
     $q.notify({
       type: 'positive',
       message: 'Successfully reverted upload',
@@ -161,7 +161,7 @@
 
   function success(val) {
     console.log(val);
-    formData.value.serviceImage = val;
+    formData.value.url = val;
     $q.notify({
       type: 'positive',
       message: 'Successfully uploaded',

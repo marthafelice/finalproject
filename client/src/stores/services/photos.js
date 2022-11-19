@@ -1,16 +1,16 @@
 import { defineStore, BaseModel } from 'feathers-pinia'; // (1)
 import { api } from 'src/api/feathers';
 
-export class Employees extends BaseModel {
+export class Photos extends BaseModel {
 
 }
 
-const servicePath = 'employees';
-const useEmployees = defineStore({
+const servicePath = 'photos';
+const usePhotos = defineStore({
   idField: '_id', // (2)
   clients: { api }, // (2)
   servicePath,
-  Model:Employees,
+  Model: Photos,
 });
 
 api.service(servicePath).hooks({
@@ -38,4 +38,4 @@ api.service(servicePath).hooks({
 });
 
 
-export default useEmployees;
+export default usePhotos;

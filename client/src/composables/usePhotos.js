@@ -10,8 +10,8 @@ import useFindPaginate from 'src/composables/useFindPaginate';
 export default function (){
   const $q = useQuasar();
   const $router = useRouter();
-  const openServiceForm = ref(false);
-  const serviceToEdit = ref({});
+  const openPhotoForm = ref(false);
+  const photoToEdit = ref({});
 
 
   const authStore = useAuth();
@@ -19,53 +19,52 @@ export default function (){
   const{payload} = storeToRefs(authStore);
 
   // 2. Create a computed property for the params
-  const servicesQuery = computed(() => {
+  const photosQuery = computed(() => {
     return {
     };
   });
 
-  const servicesParams = computed(() => {
+  const photosParams = computed(() => {
     return {
     };
   });
   // 3. Provide the Model class and params in the options
-  const {items: services, itemsCount: servicesTotal, currentPage: servicesCurrentPage} = useFindPaginate({
-    model: models.api.Services,
-    qid: ref('servicesQid'),
-    query: servicesQuery,
-    params: servicesParams,
+  const {items: photos, itemsCount: photosTotal, currentPage: photosCurrentPage} = useFindPaginate({
+    model: models.api.Photos,
+    qid: ref('photosQid'),
+    query: photosQuery,
+    params: photosParams,
     limit: ref(10),
     infinite: ref(true),
   });
 
-
-  async function navigateToService(serviceId) {
-    if (serviceId && payload?.value?.activeAccount) {
-      await $router.push(`/services/${serviceId}`);
+  async function navigateToPhoto(photoId) {
+    if (photoId && payload?.value?.activeAccount) {
+      await $router.push(`/photos/${photoId}`);
     }
   }
-  function handleOpenServiceForm(service){
-   if(service?._id){
-     serviceToEdit.value = service;
+  function handleOpenPhotoForm(photo){
+   if(photo?._id){
+     photoToEdit.value = photo;
    }
-    openServiceForm.value=true;
+    openPhotoForm.value=true;
   }
 
-  async function handleDeleteService(service) {
+  async function handleDeletePhoto(photo) {
     $q.dialog({
       dark: true,
       title: 'Confirm Delete',
-      message: `Would you like to delete the ${service?.serviceName} service ?`,
+      message: `Would you like to delete the ${photo?.title} photo ?`,
       cancel: true,
       persistent: true
     }).onOk(() => {
       // console.log('>>>> OK')
     }).onOk(async () => {
       try{
-        await models.api.Services.remove(service._id);
+        await models.api.Photos.remove(photo._id);
         $q.notify({
           type: 'positive',
-          message: `Successfully deleted the ${service?.serviceName} service.`,
+          message: `Successfully deleted the ${photo?.title} photo.`,
         });
       } catch (e) {
         $q.notify({
@@ -81,15 +80,16 @@ export default function (){
     });
   }
   return {
-    serviceToEdit,
-    openServiceForm,
-    services,
-    navigateToService,
-    handleOpenServiceForm,
-    handleDeleteService,
+    photoToEdit,
+    openPhotoForm,
+    photos,
+    navigateToPhoto,
+    handleOpenPhotoForm,
+    handleDeletePhoto,
     payload,
-    servicesTotal,
-    servicesCurrentPage,
+    photosTotal,
+    photosCurrentPage,
+
   };
 
 }

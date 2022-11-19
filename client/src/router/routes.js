@@ -26,6 +26,25 @@ const routes = [
       }
     ]
   },
+
+  {
+    path: '/photos',
+    component: () => import('layouts/ProfileLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'photos',
+        meta: {requiresAuth: true, },
+        component: () => import('pages/PhotosPage.vue')
+      },
+      {
+        path: '/photos/:id',
+        meta: {requiresAuth: true, },
+        name: 'photo',
+        component: () => import('pages/PhotoPage.vue'),
+      }
+    ]
+  },
   {
     path: '/admin',
     component: () => import('layouts/MainLayout.vue'),
