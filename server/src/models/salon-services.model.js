@@ -8,14 +8,14 @@ module.exports = function (app) {
   const {Schema} = mongooseClient;
   const schema = new Schema({
 
-    serviceName: {type: String, required: true},
+    // serviceName: {type: String, required: true},
     serviceDescription: {type: String, required: true},
-    serviceRating: {type: Number},
-    serviceDuration: {type: Number},
-    serviceCost: {type: String, required: true},
+    // serviceRating: {type: Number},
+    // serviceDuration: {type: Number},
+    // serviceCost: {type: String, required: true},
     serviceImage: {type: String, required: true},
-    employees: [{type: Schema.Types.ObjectId, required: true, ref: 'employees'}], // done
-    reservations: [{type: Schema.Types.ObjectId, ref: 'reservations'}] // mostly done - requires testing
+    // employees: [{type: Schema.Types.ObjectId, required: true, ref: 'employees'}], // done
+    // reservations: [{type: Schema.Types.ObjectId, ref: 'reservations'}] // mostly done - requires testing
   }, {
     timestamps: true
   });

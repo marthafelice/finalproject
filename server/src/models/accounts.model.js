@@ -6,16 +6,18 @@ module.exports = function (app) {
   const modelName = 'accounts';
   const mongooseClient = app.get('mongooseClient');
   const { Schema } = mongooseClient;
+  const photoSchema = new Schema({
+    url:{type:String, required:true},
+    title:{type:String, required:true},
+    description:{type:String, required:true},
+  });
   const schema = new Schema({
     name: { type: String, required: true },
     phone: { type: String, required: true },
     avatar: String,
     role: { type: String, enum: ['admin', 'regular'], default: 'regular'},
     login: { type: Schema.Types.ObjectId, ref:'logins' }, //done
-    accountType: [{
-      _id: {type: Schema.Types.ObjectId, refPath:'Model'},
-      Model: { type: String, enum: ['employees', 'customers'] }, // done
-    }], // done
+    gallery: [photoSchema], // done
 
   }, {
     timestamps: true

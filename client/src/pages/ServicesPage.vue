@@ -14,9 +14,9 @@
 </template>
 
 <script setup>
-  import ServicesList from 'components/ServicesList';
-  import ServiceForm from 'components/ServiceForm';
-  import useServices from 'src/composables/useServices';
+  import ServicesList from 'components/Gallery';
+  import ServiceForm from 'components/GalleryForm';
+  import useServices from 'src/composables/usePhotos';
   import {useAuth} from 'stores/auth';
   const {handleOpenServiceForm,openServiceForm,serviceToEdit} = useServices();
   const authStore = useAuth();
