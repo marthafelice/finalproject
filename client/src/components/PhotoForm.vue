@@ -16,13 +16,13 @@
         class="q-mt-none q-gutter-lg q-pa-md"
       >
 
-          <slot name="title" >
-            <h5 class="text-center text-white">{{photo._id? 'Edit': 'New'}} Photo </h5>
-          </slot>
+        <slot name="title" >
+          <h5 class="text-center text-white">{{photo?._id? 'Edit': 'New'}} Photo</h5>
+        </slot>
 
         <j-file-pond
           class="self-center"
-         :div-attrs="{ style:`height:auto; margin-top:-20px; ${$q.screen.gt.sm ? 'width: 15rem;':''}`,}"
+          :div-attrs="{ style:`height:auto; margin-top:-20px; ${$q.screen.gt.sm ? 'width: 15rem;':''}`,}"
           @upload-error="failed"
           @revert-success="reverted"
           @upload-success="success"
@@ -31,47 +31,19 @@
         <q-input
           filled
           dense
-         bg-color="grey-4"
-         label-color="dark"
+          bg-color="grey-4"
+          label-color="dark"
           v-model="formData.title"
-          label="Title*"
+          label="Photo title *"
           lazy-rules
           required
-          :rules="[ val => $lget(val,'length') > 3 || 'Please enter a valid photo title.']"
+          :rules="[ val => $lget(val,'length') > 3 || 'Please enter a valid photo name.']"
         >
           <template #hint>
             <span class="text-caption text-grey-4">Enter Photo Title</span>
           </template>
         </q-input>
-<!--        <q-input-->
-<!--          filled-->
-<!--          dense-->
-<!--          bg-color="grey-4"-->
-<!--          label-color="dark"-->
-<!--          v-model="formData.serviceCost"-->
-<!--          label="Service Cost *"-->
-<!--          mask="######"-->
-<!--          unmasked-value-->
-<!--          lazy-rules-->
-<!--          required-->
-<!--          :rules="[ val => isCurrency(val,{symbol: 'UGX', require_symbol: false, allow_space_after_symbol: true, symbol_after_digits: true, allow_negatives: false, thousands_separator: ',', allow_decimal: false, allow_space_after_digits: false}) || 'Please enter valid currency']"-->
-<!--        >-->
-<!--          <template #hint>-->
-<!--            <span class="text-caption text-grey-4">Enter Service Cost (ugx 1,690)</span>-->
-<!--          </template>-->
-<!--          <template #prepend>-->
-<!--            <span class="text-caption text-bold ">USH</span>-->
-<!--          </template>-->
-<!--          <template #append>-->
-<!--            <span class="text-caption text-bold ">/=</span>-->
-<!--          </template>-->
-<!--        </q-input>-->
-<!--       <div class="column">-->
-<!--         <span class="text-caption">-->
-<!--           Service Duration-->
-<!--         </span>-->
-<!--         <vue-number-input v-model="formData.serviceDuration" :min="1" :max="10" inline controls :disabled="formData.serviceDuration>10"/>-->
-<!--       </div>-->
+
         <q-input
           filled
           dense
@@ -86,10 +58,10 @@
           :rules="[ val => $lget(val,'length') > 15 || 'Description must be more than 15 words']"
         >
           <template #hint>
-          <span class="text-caption text-grey-4">Enter Photo Description</span>
-        </template>
+            <span class="text-caption text-grey-4">Enter Photo Description</span>
+          </template>
         </q-input>
-          <div class="q-pt-lg row justify-between q-gutter-sm">
+        <div class="q-pt-lg row justify-between q-gutter-sm">
           <q-btn label="Close" type="reset" color="white" outline class="q-ml-sm" />
 
           <slot name="Submit-button">
@@ -105,12 +77,12 @@
 <script setup>
   import $lget from 'lodash.get';
   // import $lset from 'lodash.set';
-  // import VueNumberInput from '@chenfengyuan/vue-number-input';
+
   import JFilePond from 'components/j-uploader/JFilePond';
   import {ref, watch} from 'vue';
-  // import isCurrency from 'validator/lib/isCurrency';
-  // import {models} from 'feathers-pinia';
+  import {models} from 'feathers-pinia';
   import {useQuasar} from 'quasar';
+  import usePhotos from 'src/composables/usePhotos';
 
   const $q = useQuasar();
   const props = defineProps(['modelValue','photo']);
@@ -121,17 +93,22 @@
 
   watch(()=>props.photo,(newVal)=>{
     if(newVal) {
-      formData.value = (newVal);
+      formData.value = new models.api.Photos(newVal);
     }else{
-      formData.value = {};
+      formData.value = new models.api.Photos({});
     }
   },{
     immediate: true,
     deep: true
   });
 
+  const {
+    payload,
+  } = usePhotos();
+
   async function onSubmit(){
     try{
+      formData.value.account = payload.value?.activeAccount;
       await formData.value.save();
       onReset();
       $q.notify({
@@ -147,7 +124,7 @@
   }
 
   function onReset() {
-    formData.value = {};
+    formData.value = new models.api.Photos({});
     $emit('update:model-value', false);
   // open.value = false;
   }
