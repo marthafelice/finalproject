@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title :class="[$q.screen.lt.md? 'text-h6':'text-h4']">
-          Salon Booking System
+          Gallery App
         </q-toolbar-title>
 
       </q-toolbar>
@@ -125,10 +125,10 @@
         //   link: '/reservations',
         // },
         {
-          title: 'Services',
-          caption: 'Saloon Photos',
+          title: 'Gallery',
+          caption: 'Photos',
           icon: 'fas fa-icons',
-          link: '/services',
+          link: '/photos',
         },
       ];
       if (authStore?.payload?.roles === 'admin') {
@@ -139,29 +139,29 @@
             icon: 'fas fa-users',
             link: '/accounts',
           },
+          // {
+          //   title: 'Employees',
+          //   caption: 'Salon Employees',
+          //   icon: 'school',
+          //   link: '/employees',
+          // },
+          // {
+          //   title: 'Customers',
+          //   caption: 'Salon Customers',
+          //   icon: 'code',
+          //   link: '/customers',
+          // },
+          // {
+          //   title: 'Reservations',
+          //   caption: 'Manage Orders',
+          //   icon: 'chat',
+          //   link: '/reservations',
+          // },
           {
-            title: 'Employees',
-            caption: 'Salon Employees',
-            icon: 'school',
-            link: '/employees',
-          },
-          {
-            title: 'Customers',
-            caption: 'Salon Customers',
-            icon: 'code',
-            link: '/customers',
-          },
-          {
-            title: 'Reservations',
-            caption: 'Manage Orders',
-            icon: 'chat',
-            link: '/reservations',
-          },
-          {
-            title: 'Services',
-            caption: 'Saloon Photos',
+            title: 'Gallery',
+            caption: 'Photos',
             icon: 'fas fa-icons',
-            link: '/services',
+            link: '/photos',
           },
         ];
       }

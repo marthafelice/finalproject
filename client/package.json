@@ -1,15 +1,15 @@
 {
   "name": "client",
   "version": "0.0.1",
-  "description": "salon booking system",
-  "productName": "Afros_n_mo",
+  "description": "gallery app",
+  "productName": "gallery app",
   "author": "martha",
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.vue ./ --fix",
     "format": "prettier --write \"**/*.{js,vue,scss,html,md,json}\" --ignore-path .gitignore",
     "test": "echo \"No test specified\" && exit 0",
-    "dev": "lint && quasar dev",
+    "dev": "quasar dev",
     "build": "quasar build",
     "build:pwa": "quasar build -m pwa"
   },
