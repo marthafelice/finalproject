@@ -126,7 +126,7 @@
         // },
         {
           title: 'Services',
-          caption: 'Saloon Services',
+          caption: 'Saloon Photos',
           icon: 'fas fa-icons',
           link: '/services',
         },
@@ -159,7 +159,7 @@
           },
           {
             title: 'Services',
-            caption: 'Saloon Services',
+            caption: 'Saloon Photos',
             icon: 'fas fa-icons',
             link: '/services',
           },

@@ -5,12 +5,12 @@
       v-model="tab"
       class="text-primary q-pb-xs"
     >
-      <q-tab class="text-grey-4"  dense v-if="employeeId" name="schedule" icon="fas fa-calendar" label="My Schedule"/>
-      <q-tab class="text-grey-4"  dense v-if="customerId" name="reservations" icon="fas fa-pray" label="My Reservations"/>
+<!--      <q-tab class="text-grey-4"  dense v-if="employeeId" name="schedule" icon="fas fa-calendar" label="My Schedule"/>-->
+<!--      <q-tab class="text-grey-4"  dense v-if="customerId" name="reservations" icon="fas fa-pray" label="My Reservations"/>-->
       <q-tab class="text-grey-4"  dense name="profile" icon="fas fa-user" label="My Profile"/>
     </q-tabs>
-    <scheduler v-if="customerId&&tab==='reservations'" account-type="customers" :query-prop="{customer:customerId}"/>
-      <scheduler v-if="employeeId&&tab==='schedule'" account-type="employees" :query-prop="{employee:employeeId}"/>
+<!--    <scheduler v-if="customerId&&tab==='reservations'" account-type="customers" :query-prop="{customer:customerId}"/>-->
+<!--      <scheduler v-if="employeeId&&tab==='schedule'" account-type="employees" :query-prop="{employee:employeeId}"/>-->
     <q-card v-if="tab==='profile'" dark flat class="bg-primary" :style="$q.screen.gt.xs?{minWidth: '35vw'}:{minWidth: '90vw'}">
       <q-img v-if="account?.avatar" :src="account?.avatar" crossorigin="anonymous"/>
       <q-card-section>
@@ -51,12 +51,12 @@
 
 <script setup>
 
-  import {computed, ref} from 'vue';
+  import {ref} from 'vue';
   import AccountForm from 'components/AccountForm';
   import {models, useGet} from 'feathers-pinia';
   import {useRoute} from 'vue-router';
   import useAccounts from 'src/composables/useAccounts';
-  import Scheduler from 'components/Calendar/Scheduler';
+  // import Scheduler from 'components/Calendar/Scheduler';
 
   let tab = ref('profile');
 
@@ -76,15 +76,15 @@
     query:{}
   });
 
-  const customerId = computed(() =>{
-    const customer = account?.value?.accountType.find(account => account.Model==='customers');
-    return customer?._id;
-  });
+  // const customerId = computed(() =>{
+  //   const customer = account?.value?.accountType.find(account => account.Model==='customers');
+  //   return customer?._id;
+  // });
 
-  const employeeId = computed(() =>{
-    const customer = account?.value?.accountType.find(account => account.Model==='employees');
-    return customer?._id;
-  });
+  // const employeeId = computed(() =>{
+  //   const customer = account?.value?.accountType.find(account => account.Model==='employees');
+  //   return customer?._id;
+  // });
 
 
 </script>

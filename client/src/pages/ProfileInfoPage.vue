@@ -9,7 +9,7 @@
   import {ref, onMounted} from 'vue';
   import AccountForm from 'components/AccountForm';
   import {useRouter} from 'vue-router';
-  import ServicesList from 'components/Gallery';
+  import ServicesList from 'components/PhotosList';
   import {useAuth} from 'stores/auth';
 
   const $router = useRouter();
