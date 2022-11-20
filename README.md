@@ -1,2 +1,2 @@
-# finalproject
-salon management system
+# Ngeni Interview Project
+Gallery App
